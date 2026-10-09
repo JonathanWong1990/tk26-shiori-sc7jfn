@@ -14,11 +14,11 @@
 //   leg dur:    "80 min", "~40 min" (~ = approx, shown as 約), "2.5h"
 
 window.TRIP = {
-  version: 5,
+  version: 6,
   updated: "2026-10-09",
   changes: {
-    zh: "新增「酒店」：Vanjai 揀咗 3 間候選。餐廳加咗去年第二份清單，按地區分組，撳開睇。改用大家個名。",
-    en: "New Hotels section: Vanjai's 3 candidates. Restaurants now include last year's second list, grouped by area (tap to open). Using everyone's names now."
+    zh: "新設計：下面有分頁（首頁、行程、日曆、酒店、餐廳）。每個地方都有自己一頁，有相片、介紹、做咩好同小貼士。撳「的士卡」可以俾司機睇日文地址。",
+    en: "New design: tabs along the bottom (Home, Plans, Calendar, Hotels, Food). Every place has its own page with a photo, what it is, what to do and tips. Tap Taxi card to show the driver the Japanese name."
   },
   status: { zh: "計劃中 · 全部未訂", en: "Still planning · nothing booked" },
   start: "2026-12-20",

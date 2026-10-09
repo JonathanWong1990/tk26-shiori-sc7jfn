@@ -3,7 +3,9 @@
 A phone-first, read-only page for the family (Traditional Chinese by default, with an English toggle). It will be hosted on GitHub Pages.
 
 - `trip-data.js` holds **all the content**. Update this file when the plan changes. The format is described at the top of the file.
-- `index.html` holds the layout and design. It shouldn't need changes when the content changes.
+- `place-info.js` holds each place's description: `about`, `todo` (what to do) and `tips`, keyed by the place id from `trip-data.js`.
+- `place-img.js` plus `img/` hold the photos. Use free-licensed Wikimedia Commons images only, resized to about 960px, and fill in the credit fields (the page is public).
+- `index.html` holds the layout and design: a small app with a bottom tab bar and a page per place (`#/place/<id>`). It shouldn't need changes when the content changes.
 - `_drafts/` holds design explorations. Don't publish it.
 
 Planning research lives in the markdown files in the parent folder. That's the source of truth, and `trip-data.js` is the family-friendly version of it. Each round:

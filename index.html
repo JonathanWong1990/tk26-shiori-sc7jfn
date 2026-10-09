@@ -11,12 +11,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;1,400&display=swap">
 <style>
-/* Layout: travel-wallet structure (sticky day picker, day cards, boarding-pass legs) in a ryokan palette — stone, sumi ink, bronze. */
+/* Layout: a small travel app — bottom tab bar, list screens, and a page per place. Ryokan palette: stone, sumi ink, bronze. */
 :root {
   --bg: #F2F0EB;
   --surface: #FBFAF7;
   --ink: #2A2723;
-  --muted: #736C62;
+  --muted: #6E675D;
   --line: #E2DDD3;
   --bronze: #6B5C43;
   --bronze-soft: #EAE4D8;
@@ -27,6 +27,7 @@
   --moss-soft: #E3E8DC;
   --ochre: #7A5414;
   --ochre-soft: #F3E9D6;
+  --shade: rgba(42, 39, 35, .05);
 
   --f-display: "Noto Serif TC", "Songti TC", serif;
   --f-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
@@ -36,131 +37,275 @@
   --s-sm: 0.9375rem;
   --s-md: 1.0625rem;
   --s-lg: 1.3125rem;
-  --s-xl: 2rem;
+  --s-xl: 1.875rem;
+  --tabs-h: 64px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #191714; --surface: #23201C; --ink: #ECE7DE; --muted: #A79F92; --line: #36322C;
     --bronze: #C7B18A; --bronze-soft: #2F2A22; --pass: #0F0E0C; --pass-fg: #ECE7DE; --pass-muted: #9C9282;
-    --moss: #A6BA92; --moss-soft: #262C20; --ochre: #DDAE62; --ochre-soft: #33281A;
+    --moss: #A6BA92; --moss-soft: #262C20; --ochre: #DDAE62; --ochre-soft: #33281A; --shade: rgba(0, 0, 0, .25);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #191714; --surface: #23201C; --ink: #ECE7DE; --muted: #A79F92; --line: #36322C;
   --bronze: #C7B18A; --bronze-soft: #2F2A22; --pass: #0F0E0C; --pass-fg: #ECE7DE; --pass-muted: #9C9282;
-  --moss: #A6BA92; --moss-soft: #262C20; --ochre: #DDAE62; --ochre-soft: #33281A;
+  --moss: #A6BA92; --moss-soft: #262C20; --ochre: #DDAE62; --ochre-soft: #33281A; --shade: rgba(0, 0, 0, .25);
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 76px; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font-family: var(--f-body); font-size: var(--s-md); line-height: 1.65;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(var(--tabs-h) + env(safe-area-inset-bottom, 0px) + 12px);
 }
+body.locked { overflow: hidden; }
 [data-lang="zh"] .en, [data-lang="en"] .zh { display: none !important; }
 a { color: inherit; }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; border-radius: 6px; }
 .wrap { max-width: 34rem; margin: 0 auto; padding-inline: 18px; }
+img { max-width: 100%; display: block; }
 
-/* Cover */
-.cover { padding-block: calc(env(safe-area-inset-top, 0px) + 36px) 8px; }
-.cover-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.eyebrow { font-family: var(--f-latin); font-style: italic; font-size: 1.0625rem; color: var(--bronze); letter-spacing: .03em; }
-.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); padding: 2px; flex: none; }
-.lang button { border: 0; background: transparent; padding: 5px 14px; border-radius: 999px; font-size: var(--s-sm); font-weight: 500; color: var(--muted); cursor: pointer; min-height: 40px; }
-.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-h1 {
-  font-family: var(--f-display); font-weight: 300; font-size: var(--s-xl); letter-spacing: .1em;
-  line-height: 1.3; margin: 10px 0 6px; text-wrap: balance;
-}
-.meta { color: var(--muted); font-size: var(--s-sm); letter-spacing: .04em; }
-.changes {
-  margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: var(--bronze-soft);
-  font-size: var(--s-sm); line-height: 1.6;
-}
-.changes .lbl { display: block; font-size: var(--s-xs); color: var(--bronze); font-weight: 500; letter-spacing: .06em; margin-bottom: 2px; }
-
-/* Day picker */
-.picker {
+/* Top bar */
+.top {
   position: sticky; top: 0; z-index: 20;
-  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   padding-top: env(safe-area-inset-top, 0px);
-  margin-top: 18px;
+  border-bottom: 1px solid transparent; transition: border-color .2s;
 }
-.chips {
-  display: flex; gap: 8px; overflow-x: auto; padding: 10px 18px 12px; scrollbar-width: none;
-  max-width: 34rem; margin: 0 auto; position: relative;
+.top.scrolled { border-bottom-color: var(--line); }
+.top .wrap { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; min-height: 56px; }
+.back {
+  display: inline-flex; align-items: center; gap: 4px; border: 0; background: transparent; cursor: pointer;
+  padding: 8px 10px 8px 0; min-height: 44px; font-size: var(--s-sm); font-weight: 500; color: var(--bronze);
 }
-.chips::-webkit-scrollbar { display: none; }
-.chip {
-  flex: none; text-decoration: none; padding: 10px 16px; border-radius: 999px; min-height: 44px; display: inline-flex; align-items: center;
-  background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
-  font-size: var(--s-sm); font-weight: 500; color: var(--ink); white-space: nowrap; line-height: 1.4;
+.back svg { width: 20px; height: 20px; }
+.top-title { font-family: var(--f-display); font-size: 1.0625rem; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); padding: 2px; }
+.lang button { border: 0; background: transparent; padding: 5px 13px; border-radius: 999px; font-size: var(--s-sm); font-weight: 500; color: var(--muted); cursor: pointer; min-height: 38px; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* Bottom tabs */
+.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-.chip small { color: var(--muted); font-weight: 400; margin-left: 4px; font-size: var(--s-xs); }
-.chip.on { background: var(--ink); color: var(--bg); box-shadow: none; }
-.chip.on small { color: var(--pass-muted); }
-.chip.today { box-shadow: inset 0 0 0 1.5px var(--bronze); }
-.chip .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--bronze); margin-right: 6px; vertical-align: 2px; }
+.tabs .row { max-width: 34rem; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); height: var(--tabs-h); }
+.tabs a {
+  display: grid; place-items: center; align-content: center; gap: 3px; text-decoration: none;
+  color: var(--muted); font-size: 0.8125rem; font-weight: 500;
+}
+.tabs a svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.tabs a[aria-current="page"] { color: var(--ink); }
+.tabs a[aria-current="page"] svg { stroke: var(--bronze); stroke-width: 2; }
 
-/* Sections */
-.section { padding-block: 20px; }
-.sec-title { font-family: var(--f-display); font-weight: 400; font-size: var(--s-lg); letter-spacing: .08em; margin: 0 0 12px; }
-
-/* Rows */
-.walk { display: inline-flex; gap: 3px; }
-.walk i { width: 14px; height: 4px; border-radius: 2px; background: var(--line); }
-.walk i.on { background: var(--bronze); }
-
-.card { background: var(--surface); border-radius: 18px; padding: 4px 16px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
-.item { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; }
-.item + .item { border-top: 1px solid var(--line); }
-.item .t { font-size: var(--s-xs); color: var(--bronze); font-weight: 500; letter-spacing: .04em; align-self: start; padding-top: 3px; }
-.item .w { min-width: 0; line-height: 1.5; }
-.item .w b { font-weight: 500; }
-.item .w small { display: block; color: var(--muted); font-size: var(--s-xs); margin-top: 1px; }
-.item.muted .w b { color: var(--muted); font-weight: 400; }
+/* Common */
+.view { padding-block: 8px 24px; }
+.eyebrow { font-family: var(--f-latin); font-style: italic; font-size: 1.0625rem; color: var(--bronze); letter-spacing: .03em; }
+h1 { font-family: var(--f-display); font-weight: 300; font-size: var(--s-xl); letter-spacing: .08em; line-height: 1.3; margin: 6px 0 6px; text-wrap: balance; }
+.meta { color: var(--muted); font-size: var(--s-sm); letter-spacing: .02em; }
+.lede { color: var(--muted); font-size: var(--s-sm); margin: 0 0 14px; }
+.sec { margin-top: 26px; }
+.sec-title { font-family: var(--f-display); font-weight: 400; font-size: var(--s-lg); letter-spacing: .06em; margin: 0 0 10px; }
+.card { background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px var(--shade); }
+.wip {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+  font-size: var(--s-xs); font-weight: 500; letter-spacing: .04em; color: var(--ochre);
+  background: var(--ochre-soft); padding: 4px 12px; border-radius: 999px;
+}
+.wip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.changes { margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: var(--bronze-soft); font-size: var(--s-sm); line-height: 1.6; }
+.changes .lbl { display: block; font-size: var(--s-xs); color: var(--bronze); font-weight: 500; letter-spacing: .04em; margin-bottom: 2px; }
 .badge { display: inline-block; font-size: 0.8125rem; font-weight: 500; padding: 1px 8px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
 .badge.b-booked { color: var(--moss); background: var(--moss-soft); }
-.badge.b-tobook { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
-.acts { display: flex; gap: 6px; }
-.act {
-  width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; text-decoration: none;
-  display: grid; place-items: center; background: var(--bronze-soft); color: var(--ink);
-  font-size: 0.8125rem; font-weight: 500; line-height: 1;
-}
-.act:hover { background: var(--line); }
-
-.pass {
-  background: var(--pass); color: var(--pass-fg); border-radius: 18px; padding: 14px 18px;
-  display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; position: relative;
-}
-.pass .st { min-width: 0; }
-.pass .st b { display: block; overflow-wrap: anywhere; font-family: var(--f-display); font-weight: 400; font-size: 1.125rem; letter-spacing: .04em; line-height: 1.35; }
-.pass .st:last-child { text-align: right; }
-.pass .mid { text-align: center; font-size: 0.8125rem; color: var(--pass-muted); line-height: 1.4; max-width: 8em; }
-.pass .mid b { display: block; font-family: var(--f-latin); font-size: 1.375rem; font-weight: 500; color: var(--pass-fg); letter-spacing: .02em; }
-.pass .lab { font-size: 0.8125rem; letter-spacing: .14em; color: var(--pass-muted); }
-
+.badge.b-tobook, .badge.b-idea { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
+.badge.b-first { color: var(--bg); background: var(--bronze); }
+.badge.b-review { color: var(--ochre); background: var(--ochre-soft); }
+.pick { font-size: 0.8125rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+.pick.suggested { background: var(--ink); color: var(--bg); }
+.pick.either { background: var(--bronze-soft); color: var(--bronze); }
+.pick.alt { box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
+.walk { display: inline-flex; gap: 3px; vertical-align: middle; }
+.walk i { width: 14px; height: 4px; border-radius: 2px; background: var(--line); }
+.walk i.on { background: var(--bronze); }
+.facts-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: var(--s-xs); color: var(--muted); }
+.facts-row > span { display: inline-flex; align-items: center; gap: 6px; }
 .flag { border-radius: 14px; padding: 11px 14px; font-size: var(--s-sm); line-height: 1.6; display: grid; grid-template-columns: auto 1fr; gap: 10px; }
 .flag .k { font-size: var(--s-xs); font-weight: 700; letter-spacing: .04em; padding-top: 2px; white-space: nowrap; }
 .flag.tbd { background: var(--ochre-soft); }
 .flag.tbd .k { color: var(--ochre); }
 .flag.note { background: var(--bronze-soft); }
 .flag.note .k { color: var(--bronze); }
+.chev { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.8; flex: none; }
 
-footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); text-align: center; line-height: 1.8; }
+/* Link rows (a place, a restaurant, a hotel) */
+.rows { padding: 2px 14px; }
+.lrow { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px 0; text-decoration: none; min-height: 60px; }
+.lrow + .lrow { border-top: 1px solid var(--line); }
+.lrow .th { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: var(--bronze-soft); }
+.lrow .th.ph { display: grid; place-items: center; }
+.lrow .th.ph svg { width: 24px; height: 24px; stroke: var(--bronze); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.lrow .t { font-size: var(--s-xs); color: var(--bronze); font-weight: 500; width: 3.4em; }
+.lrow .w { min-width: 0; line-height: 1.45; }
+.lrow .w b { font-weight: 500; }
+.lrow .w small { display: block; color: var(--muted); font-size: var(--s-xs); margin-top: 2px; }
+.lrow .w .price { display: block; font-size: var(--s-xs); margin-top: 1px; }
+.lrow.slim { grid-template-columns: 1fr auto; }
+.lrow.timed { grid-template-columns: auto auto 1fr auto; }
+
+/* Boarding-pass legs */
+.pass {
+  background: var(--pass); color: var(--pass-fg); border-radius: 18px; padding: 14px 18px;
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center;
+}
+.pass .st { min-width: 0; }
+.pass .st b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.125rem; letter-spacing: .04em; line-height: 1.35; overflow-wrap: anywhere; }
+.pass .st:last-child { text-align: right; }
+.pass .mid { text-align: center; font-size: 0.8125rem; color: var(--pass-muted); line-height: 1.4; max-width: 8em; }
+.pass .mid b { display: block; font-family: var(--f-latin); font-size: 1.375rem; font-weight: 500; color: var(--pass-fg); }
+.pass .lab { font-size: 0.8125rem; letter-spacing: .1em; color: var(--pass-muted); }
+.stack { display: grid; gap: 10px; }
+
+/* Home */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile { position: relative; display: block; border-radius: 18px; overflow: hidden; aspect-ratio: 4 / 3; text-decoration: none; background: var(--pass); }
+.tile img { width: 100%; height: 100%; object-fit: cover; }
+.tile > span {
+  position: absolute; inset: auto 0 0 0; padding: 28px 12px 10px; color: #fff;
+  background: linear-gradient(transparent, rgba(0,0,0,.65)); font-family: var(--f-display); font-size: 1.125rem; letter-spacing: .08em;
+}
+.tile > span small { display: block; font-family: var(--f-body); font-size: 0.8125rem; letter-spacing: 0; opacity: .85; }
+.today-card { display: grid; gap: 4px; padding: 16px; text-decoration: none; border: 1.5px solid var(--bronze); }
+.today-card .lbl { font-size: var(--s-xs); color: var(--bronze); font-weight: 700; letter-spacing: .06em; }
+.today-card b { font-family: var(--f-display); font-weight: 400; font-size: 1.25rem; }
+.todo-list { padding: 4px 14px; }
+.todo-list a { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 12px 0; text-decoration: none; }
+.todo-list a + a { border-top: 1px solid var(--line); }
+.todo-list .code { font-family: var(--f-latin); font-size: 1.5rem; color: var(--bronze); line-height: 1; text-align: center; }
+.todo-list .tx { font-size: var(--s-sm); line-height: 1.55; min-width: 0; }
+.factlist { list-style: none; margin: 0; padding: 4px 16px; }
+.factlist li { padding: 12px 0; line-height: 1.55; }
+.factlist li + li { border-top: 1px solid var(--line); }
+.factlist b { display: block; font-weight: 500; }
+.factlist span { font-size: var(--s-sm); color: var(--muted); }
+
+/* Plan list */
+.group-lbl { margin: 24px 2px 10px; font-size: var(--s-xs); letter-spacing: .1em; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+.group-lbl::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.plan-cards { display: grid; gap: 14px; }
+.pcard { display: block; text-decoration: none; overflow: hidden; }
+.pcard .img { position: relative; aspect-ratio: 16 / 9; background: var(--bronze-soft); }
+.pcard .img img { width: 100%; height: 100%; object-fit: cover; }
+.pcard .code {
+  position: absolute; left: 12px; bottom: 10px; width: 48px; height: 48px; border-radius: 12px;
+  background: var(--surface); color: var(--bronze); display: grid; place-items: center;
+  font-family: var(--f-latin); font-size: 2rem; line-height: 1;
+}
+.pcard .body { padding: 12px 16px 14px; display: grid; gap: 6px; }
+.pcard h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.1875rem; letter-spacing: .04em; margin: 0; line-height: 1.4; text-wrap: balance; }
+.pcard .stops { font-size: var(--s-xs); color: var(--muted); line-height: 1.5; }
+
+/* Hero (plan + place pages) */
+.hero { margin: 4px -18px 0; position: relative; }
+.hero img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; max-height: 62vh; }
+.hero .code {
+  position: absolute; left: 18px; bottom: -22px; width: 56px; height: 56px; border-radius: 14px;
+  background: var(--surface); color: var(--bronze); display: grid; place-items: center; box-shadow: 0 2px 8px var(--shade);
+  font-family: var(--f-latin); font-size: 2.3rem; line-height: 1;
+}
+.credit { font-size: 0.75rem; color: var(--muted); padding: 6px 0 0; text-align: right; }
+.credit a { color: inherit; }
+.hero + .credit { padding-right: 0; }
+.title-block { margin-top: 18px; display: grid; gap: 6px; }
+.title-block h1 { font-size: 1.625rem; font-weight: 400; margin: 0; }
+.title-block .ja { font-size: var(--s-sm); color: var(--muted); }
+.has-code .title-block { margin-top: 30px; }
+.prose { margin: 14px 0 0; font-size: var(--s-md); line-height: 1.75; }
+.blist { margin: 0; padding: 4px 16px; list-style: none; }
+.blist li { display: grid; grid-template-columns: 16px 1fr; gap: 8px; padding: 9px 0; line-height: 1.6; }
+.blist li + li { border-top: 1px solid var(--line); }
+.blist li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bronze); margin-top: .7em; }
+.blist.tips li::before { border-radius: 1px; transform: rotate(45deg); background: var(--ochre); }
+.actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-top: 18px; }
+.btn {
+  display: grid; place-items: center; gap: 2px; padding: 12px 8px; min-height: 64px; border: 0; border-radius: 16px; cursor: pointer;
+  text-decoration: none; background: var(--bronze-soft); color: var(--ink); font-weight: 500; font-size: var(--s-sm); text-align: center;
+}
+.btn svg { width: 22px; height: 22px; stroke: var(--bronze); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.primary svg { stroke: var(--bg); }
+.kv { display: grid; gap: 2px; padding: 12px 16px; }
+.kv + .kv { border-top: 1px solid var(--line); }
+.kv small { font-size: var(--s-xs); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; min-height: 40px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none; font-size: var(--s-sm); }
+.chip b { font-family: var(--f-latin); font-size: 1.125rem; color: var(--bronze); font-weight: 500; }
+
+/* Calendar */
+.period { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 18px 2px 8px; }
+.period b { font-family: var(--f-display); font-weight: 400; letter-spacing: .06em; }
+.period span { font-size: var(--s-xs); color: var(--muted); }
+.cal { list-style: none; margin: 0; padding: 0 16px; }
+.cal li { display: grid; grid-template-columns: 50px 1fr; gap: 14px; padding: 12px 0; align-items: start; }
+.cal li + li { border-top: 1px solid var(--line); }
+.cal .dt { text-align: center; line-height: 1.15; padding-top: 2px; }
+.cal .dt b { display: block; font-family: var(--f-latin); font-weight: 500; font-size: 1.6rem; color: var(--bronze); }
+.cal .dt small { font-size: 0.8125rem; color: var(--muted); }
+.cal .what { min-width: 0; line-height: 1.5; }
+.cal .what > b { font-weight: 500; }
+.cal .open { color: var(--muted); }
+.cal .what a { text-decoration: none; }
+.cal .what a b { border-bottom: 1px solid var(--bronze); font-weight: 500; }
+.cal .nts { display: grid; gap: 2px; margin-top: 3px; }
+.cal .nts span { font-size: var(--s-xs); color: var(--ochre); }
+.cal li.today .dt b { color: var(--ink); }
+
+/* Hotels */
+.hcard { display: block; text-decoration: none; overflow: hidden; }
+.hcard .body { padding: 14px 16px; display: grid; gap: 4px; }
+.hcard b { font-family: var(--f-display); font-weight: 500; font-size: 1.125rem; }
+.hcard small { color: var(--bronze); font-size: var(--s-xs); }
+.hcard p { margin: 4px 0 0; font-size: var(--s-sm); color: var(--muted); line-height: 1.6; }
+.hcard .more-row { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: var(--s-xs); color: var(--bronze); font-weight: 500; }
+
+/* Food */
+.food-group { display: grid; gap: 8px; margin-bottom: 22px; }
+.food-group h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.125rem; letter-spacing: .05em; margin: 0 2px; }
+.food-group .intro { margin: -2px 2px 2px; font-size: var(--s-xs); color: var(--muted); }
+.empty-slot { border: 1.5px dashed var(--line); border-radius: 18px; padding: 18px; text-align: center; color: var(--muted); font-size: var(--s-sm); }
+.plan-tag { font-family: var(--f-latin); font-size: 1rem; color: var(--bronze); }
+.more { background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px var(--shade); }
+.more summary {
+  list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;
+  padding: 14px 16px; min-height: 52px; font-weight: 500;
+}
+.more summary::-webkit-details-marker { display: none; }
+.more summary .cnt { font-size: var(--s-xs); color: var(--muted); font-weight: 400; }
+.more summary::after { content: ""; width: 8px; height: 8px; border-right: 1.5px solid var(--bronze); border-bottom: 1.5px solid var(--bronze); transform: rotate(45deg); margin: -4px 4px 0 0; transition: transform .15s; }
+.more[open] summary::after { transform: rotate(-135deg); margin-top: 4px; }
+.more .rows { border-top: 1px solid var(--line); }
+
+/* Credits */
+.credits { list-style: none; margin: 0; padding: 4px 16px; font-size: var(--s-xs); color: var(--muted); }
+.credits li { padding: 8px 0; }
+.credits li + li { border-top: 1px solid var(--line); }
+.credits b { color: var(--ink); font-weight: 500; }
+
+footer { padding-block: 28px 8px; color: var(--muted); font-size: var(--s-xs); text-align: center; line-height: 1.8; }
+footer a { color: var(--bronze); }
 
 /* Taxi card */
-.sheet-bg { position: fixed; inset: 0; z-index: 50; background: rgba(20,18,15,.45); display: grid; align-items: end; }
+.sheet-bg { position: fixed; inset: 0; z-index: 50; background: rgba(20,18,15,.5); display: grid; align-items: end; }
 .sheet {
   background: var(--surface); border-radius: 22px 22px 0 0; padding: 22px 22px calc(26px + env(safe-area-inset-bottom, 0px));
   max-width: 34rem; width: 100%; margin: 0 auto; display: grid; gap: 14px; text-align: center;
@@ -170,157 +315,34 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
 .sheet .please { font-size: var(--s-lg); }
 .sheet .please small { display: block; font-size: var(--s-xs); color: var(--muted); }
 .sheet .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
-.sheet .btn { border: 0; border-radius: 14px; padding: 13px; font-weight: 500; cursor: pointer; text-decoration: none; text-align: center; }
-.sheet .btn.primary { background: var(--ink); color: var(--bg); }
-.sheet .btn.ghost { background: var(--bronze-soft); }
+.sheet .sbtn { border: 0; border-radius: 14px; padding: 14px; font-weight: 500; cursor: pointer; text-decoration: none; text-align: center; background: var(--bronze-soft); }
+.sheet .sbtn.primary { background: var(--ink); color: var(--bg); }
 
-@media (max-width: 420px) {
-  .item { grid-template-columns: 64px 1fr; }
-  .item .acts { grid-column: 2; margin-top: 4px; }
+@media (max-width: 380px) {
+  .lrow .th { width: 52px; height: 52px; }
   .pass .st b { font-size: 1rem; }
 }
-.plan-link { display: inline-block; padding: 6px 0; text-decoration: none; }
-body.locked { overflow: hidden; }
-
-/* v3: work-in-progress label, calendar, day options, restaurants, facts */
-.wip {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
-  font-size: var(--s-xs); font-weight: 500; letter-spacing: .04em; color: var(--ochre);
-  background: var(--ochre-soft); padding: 4px 12px; border-radius: 999px;
-}
-.wip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.sec-lede { color: var(--muted); font-size: var(--s-sm); margin: -4px 0 14px; }
-
-.period { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 18px 2px 8px; }
-.period b { font-family: var(--f-display); font-weight: 400; letter-spacing: .06em; }
-.period span { font-size: var(--s-xs); color: var(--muted); }
-.period:first-child { margin-top: 0; }
-.cal { list-style: none; margin: 0; padding: 0 16px; background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
-.cal li { display: grid; grid-template-columns: 50px 1fr; gap: 14px; padding: 12px 0; align-items: start; }
-.cal li + li { border-top: 1px solid var(--line); }
-.cal .dt { text-align: center; line-height: 1.1; padding-top: 2px; }
-.cal .dt b { display: block; font-family: var(--f-latin); font-weight: 500; font-size: 1.6rem; color: var(--bronze); }
-.cal .dt small { font-size: 0.8125rem; color: var(--muted); }
-.cal .what { min-width: 0; line-height: 1.5; }
-.cal .what > b { font-weight: 500; }
-.cal .what .open { color: var(--muted); }
-.cal .what a { text-decoration: none; }
-.cal .what a b { border-bottom: 1px solid var(--bronze); }
-.cal .nts { display: grid; gap: 2px; margin-top: 3px; }
-.cal .nts span { font-size: var(--s-xs); color: var(--ochre); }
-.cal li.today .dt b { color: var(--ink); }
-.cal li.today .dt small::after { content: " · 今日"; color: var(--bronze); }
-[data-lang="en"] .cal li.today .dt small::after { content: " · Today"; }
-
-.idea { padding-block: 18px 4px; display: grid; gap: 10px; }
-.idea-head { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; align-items: center; padding-inline: 2px; }
-.idea-head .code { grid-row: span 2; font-family: var(--f-latin); font-size: 3.2rem; line-height: .9; color: var(--bronze); width: 1.1em; text-align: center; }
-.idea-head h3 { font-family: var(--f-display); font-weight: 400; font-size: var(--s-lg); letter-spacing: .04em; margin: 0; line-height: 1.4; text-wrap: balance; }
-.idea-facts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: var(--s-xs); color: var(--muted); }
-.idea-facts > span { display: inline-flex; align-items: center; gap: 6px; }
-.pick { font-size: 0.8125rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; }
-.pick.suggested { background: var(--ink); color: var(--bg); }
-.pick.either { background: var(--bronze-soft); color: var(--bronze); }
-.pick.alt { box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
-.why { margin: 0; padding-inline: 2px; font-size: var(--s-sm); color: var(--muted); line-height: 1.6; }
-.idea-group { margin: 26px 2px 0; font-size: var(--s-xs); letter-spacing: .1em; color: var(--muted); display: flex; align-items: center; gap: 12px; }
-.idea-group::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-
-.food-group { display: grid; gap: 8px; margin-bottom: 22px; }
-.food-group h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.125rem; letter-spacing: .05em; margin: 0 2px; }
-.food-group .intro { margin: -2px 2px 2px; font-size: var(--s-xs); color: var(--muted); }
-.empty-slot { border: 1.5px dashed var(--line); border-radius: 18px; padding: 18px; text-align: center; color: var(--muted); font-size: var(--s-sm); }
-.badge.b-first { color: var(--bg); background: var(--bronze); }
-.badge.b-idea { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
-.badge.b-review { color: var(--ochre); background: var(--ochre-soft); }
-.plan-tag { font-family: var(--f-latin); font-size: 0.9375rem; color: var(--bronze); margin-left: 4px; }
-.item .w .price { display: block; font-size: var(--s-xs); color: var(--ink); margin-top: 1px; }
-
-/* Hotels */
-.hotels { display: grid; gap: 12px; }
-.hotel { background: var(--surface); border-radius: 18px; padding: 16px; box-shadow: 0 1px 2px rgba(42,39,35,.05); display: grid; gap: 10px; }
-.hotel-top { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
-.hotel-top .w { min-width: 0; line-height: 1.45; }
-.hotel-top b { font-family: var(--f-display); font-weight: 500; font-size: 1.125rem; letter-spacing: .02em; }
-.hotel-top small { display: block; color: var(--bronze); font-size: var(--s-xs); margin-top: 2px; }
-.hotel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: var(--s-sm); }
-.hotel li { display: grid; grid-template-columns: 14px 1fr; gap: 6px; }
-.hotel li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--bronze); margin-top: 0.7em; }
-.hotel .hnote { margin: 0; padding-top: 10px; border-top: 1px solid var(--line); font-size: var(--s-sm); color: var(--muted); line-height: 1.6; }
-@media (max-width: 420px) { .hotel-top { grid-template-columns: 1fr; } }
-
-/* Collapsible restaurant groups */
-.more { background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
-.more + .more { margin-top: 8px; }
-.more summary {
-  list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;
-  padding: 14px 16px; min-height: 52px; font-weight: 500;
-}
-.more summary::-webkit-details-marker { display: none; }
-.more summary .cnt { font-size: var(--s-xs); color: var(--muted); font-weight: 400; }
-.more summary::after { content: ""; width: 8px; height: 8px; border-right: 1.5px solid var(--bronze); border-bottom: 1.5px solid var(--bronze); transform: rotate(45deg); margin: -4px 4px 0 0; transition: transform .15s; }
-.more[open] summary::after { transform: rotate(-135deg); margin-top: 4px; }
-.more .card { box-shadow: none; border-top: 1px solid var(--line); border-radius: 0 0 18px 18px; }
-
-.facts { list-style: none; margin: 0; padding: 4px 16px; background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
-.facts li { padding: 12px 0; line-height: 1.55; }
-.facts li + li { border-top: 1px solid var(--line); }
-.facts b { display: block; font-weight: 500; }
-.facts span { font-size: var(--s-sm); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
 
-<div class="wrap cover">
-  <div class="cover-top">
-    <div class="eyebrow">Tokyo · December 2026</div>
+<header class="top" id="top">
+  <div class="wrap">
+    <span id="back-slot"></span>
+    <span class="top-title" id="top-title"></span>
     <div class="lang" role="group" aria-label="Language">
       <button type="button" id="btn-zh" data-set="zh" aria-pressed="true">中</button>
       <button type="button" id="btn-en" data-set="en" aria-pressed="false">EN</button>
     </div>
   </div>
-  <h1><span class="zh">東京聖誕之旅</span><span class="en">Tokyo at Christmas</span></h1>
-  <div class="meta" id="meta"></div>
-  <div class="wip" id="wip"></div>
-  <div class="changes" id="changes"></div>
-</div>
+</header>
 
-<nav class="picker" aria-label="Sections"><div class="chips" id="chips"></div></nav>
+<main class="wrap view" id="view"></main>
 
-<main class="wrap">
-  <section class="section" id="calendar">
-    <h2 class="sec-title"><span class="zh">日曆</span><span class="en">Calendar</span></h2>
-    <p class="sec-lede"><span class="zh">揀好行程之後會排入日子。</span><span class="en">Day plans get placed on dates once chosen.</span></p>
-    <div id="cal"></div>
-  </section>
-
-  <section class="section" id="hotels">
-    <h2 class="sec-title"><span class="zh">酒店</span><span class="en">Hotels</span></h2>
-    <p class="sec-lede"><span class="zh">Vanjai 揀嘅候選，未訂。要兩間房，等航班同箱根決定咗先比價。</span><span class="en">Vanjai's candidates, not booked. We need two rooms; we'll compare prices once flights and Hakone are decided.</span></p>
-    <div class="hotels" id="hotel-list"></div>
-  </section>
-
-  <section class="section" id="ideas">
-    <h2 class="sec-title"><span class="zh">行程選擇</span><span class="en">Day plans to choose from</span></h2>
-    <p class="sec-lede"><span class="zh">大約揀 7 至 8 個。想去邊個、唔想去邊個，講個英文字母就得，例如「A 好，H 唔使」。</span><span class="en">We'll pick about 7–8. Just mention the letter, e.g. "A yes, skip H".</span></p>
-    <div id="idea-list"></div>
-  </section>
-
-  <section class="section" id="food">
-    <h2 class="sec-title"><span class="zh">餐廳</span><span class="en">Restaurants</span></h2>
-    <p class="sec-lede"><span class="zh">全部未訂。價錢係每位，未計飲品，可能會變。</span><span class="en">None booked. Prices per person before drinks, and may change.</span></p>
-    <div id="food-list"></div>
-  </section>
-
-  <section class="section" id="notes">
-    <h2 class="sec-title"><span class="zh">留意</span><span class="en">Good to know</span></h2>
-    <ul class="facts" id="fact-list"></ul>
-  </section>
-
-  <footer>
-    <div id="footer-ver"></div>
-  </footer>
-</main>
+<nav class="tabs" aria-label="Main">
+  <div class="row" id="tabs"></div>
+</nav>
 
 <div class="sheet-bg" id="taxi" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="taxi-ja">
@@ -328,29 +350,39 @@ body.locked { overflow: hidden; }
     <div class="ja" id="taxi-ja" lang="ja"></div>
     <div class="please"><span lang="ja">ここまでお願いします。</span><small lang="zh-Hant"><span class="zh">（請帶我哋去呢度）</span><span class="en">(Please take us here.)</span></small></div>
     <div class="row">
-      <a class="btn ghost" id="taxi-map" href="#" target="_blank" rel="noopener"><span class="zh">開地圖</span><span class="en">Open map</span></a>
-      <button class="btn primary" type="button" id="taxi-close"><span class="zh">關閉</span><span class="en">Close</span></button>
+      <a class="sbtn" id="taxi-map" href="#" target="_blank" rel="noopener"><span class="zh">開地圖</span><span class="en">Open map</span></a>
+      <button class="sbtn primary" type="button" id="taxi-close"><span class="zh">關閉</span><span class="en">Close</span></button>
     </div>
   </div>
 </div>
 
 <script src="trip-data.js"></script>
+<script src="place-info.js"></script>
+<script src="place-img.js"></script>
 <script>
 (function () {
-  var T = window.TRIP, root = document.documentElement;
+  var T = window.TRIP, INFO = window.PLACE_INFO || {}, IMG = window.PLACE_IMG || {};
+  var root = document.documentElement, view = document.getElementById('view');
   var WEEK_ZH = ['日','一','二','三','四','五','六'], WEEK_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var PICK = {
-    suggested: { zh: '建議', en: 'Suggested' },
-    either: { zh: '二揀一', en: 'Pick one' },
-    alt: { zh: '後備', en: 'Backup' }
-  };
+  var PICK = { suggested: { zh: '建議', en: 'Suggested' }, either: { zh: '二揀一', en: 'Pick one' }, alt: { zh: '後備', en: 'Backup' } };
   var STATUS = {
-    booked: { zh: '已訂', en: 'Booked' },
-    first: { zh: '優先考慮', en: 'Top pick' },
-    idea: { zh: '候選', en: 'Option' },
-    review: { zh: '保留？', en: 'Keep?' },
-    tobook: { zh: '未訂', en: 'Not booked' }
+    booked: { zh: '已訂', en: 'Booked' }, first: { zh: '優先考慮', en: 'Top pick' }, idea: { zh: '候選', en: 'Option' },
+    review: { zh: '保留？', en: 'Keep?' }, tobook: { zh: '未訂', en: 'Not booked' }
   };
+  var ICON = {
+    home: '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+    plans: '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    hotels: '<path d="M3 19V7M3 13h18v6M21 19v-4a3 3 0 0 0-3-3h-7v1"/><circle cx="7.5" cy="10" r="1.8"/>',
+    food: '<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M9 4c0 2 2 2 2 4M14 4c0 2 2 2 2 4"/>',
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    chev: '<path d="M9 5l7 7-7 7"/>',
+    taxi: '<path d="M5 16V11l2-4h10l2 4v5"/><path d="M3 16h18v2H3zM9 4h6"/><circle cx="7.5" cy="13" r=".8"/><circle cx="16.5" cy="13" r=".8"/>',
+    map: '<path d="M12 21s-6-5.5-6-10a6 6 0 0 1 12 0c0 4.5-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/>',
+    web: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 2.5 14.5 0 17M12 3.5c-2.5 2.5-2.5 14.5 0 17"/>',
+    photo: '<rect x="3.5" y="6" width="17" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1.2-2h3.6L15 6"/>'
+  };
+  function svg(name, cls) { return '<svg viewBox="0 0 24 24" aria-hidden="true"' + (cls ? ' class="' + cls + '"' : '') + '>' + ICON[name] + '</svg>'; }
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function bi(o) {
@@ -359,45 +391,66 @@ body.locked { overflow: hidden; }
     return '<span class="zh">' + esc(o.zh) + '</span><span class="en">' + esc(o.en) + '</span>';
   }
   function mapUrl(p) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.q || p.en); }
-  // "~40 min" -> 約 40 分鐘 / ~40 min ; "2.5h" -> 2.5 小時 / 2.5 h
+  function parse(s) { return new Date(s + 'T00:00:00'); }
+  function md(d) { return (d.getMonth() + 1) + '/' + d.getDate(); }
   function dur(d) {
     var m = /^(~?)([\d.]+)\s*(min|h)$/.exec(String(d).trim());
     if (!m) return { zh: d, en: d };
     return { zh: (m[1] ? '約 ' : '') + m[2] + (m[3] === 'h' ? ' 小時' : ' 分鐘'), en: m[1] + m[2] + (m[3] === 'h' ? ' h' : ' min') };
   }
-  function parse(s) { return new Date(s + 'T00:00:00'); }
-  function md(d) { return (d.getMonth() + 1) + '/' + d.getDate(); }
-  var tbc = T.datesConfirmed ? '' : '?';
-  var ideaByCode = {};
-  T.ideas.forEach(function (x) { ideaByCode[x.code] = x; });
+  function badge(st) { return st && STATUS[st] ? '<span class="badge b-' + st + '">' + bi(STATUS[st]) + '</span>' : ''; }
+  function walkBar(n) {
+    return '<span><span class="zh">行路</span><span class="en">Walking</span> <span class="walk" role="img" aria-label="' + n + '/3">' +
+      [1, 2, 3].map(function (k) { return '<i class="' + (k <= n ? 'on' : '') + '"></i>'; }).join('') + '</span></span>';
+  }
+  function hoursOf(x) {
+    return typeof x.hours === 'string'
+      ? '<span><span class="zh">' + esc(x.hours) + ' 小時</span><span class="en">' + esc(x.hours) + ' hours</span></span>'
+      : '<span>' + bi(x.hours) + '</span>';
+  }
+
+  // ---------- Indexes ----------
+  var ideaByCode = {}; T.ideas.forEach(function (x) { ideaByCode[x.code] = x; });
+  var foodRows = [];   // every restaurant row with its group
+  T.food.forEach(function (g) {
+    (g.items || []).forEach(function (r) { foodRows.push({ r: r, plan: r.plan }); });
+    (g.sub || []).forEach(function (sg) { sg.items.forEach(function (r) { foodRows.push({ r: r, plan: r.plan || sg.plan, area: sg.title }); }); });
+  });
+  var foodById = {}; foodRows.forEach(function (f) { foodById[f.r.place] = f; });
+  var hotelById = {}; (T.hotels || []).forEach(function (h) { hotelById[h.place] = h; });
+  function plansWith(id) { return T.ideas.filter(function (x) { return x.items.some(function (it) { return it.place === id; }); }); }
+  function planImage(x) {
+    for (var i = 0; i < x.items.length; i++) { var p = x.items[i].place; if (p && IMG[p]) return IMG[p]; }
+    return null;
+  }
 
   var now = new Date(); now.setHours(0, 0, 0, 0);
   var todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  var inTrip = todayStr >= T.start && todayStr <= T.end;
+  var tbc = T.datesConfirmed ? '' : '?';
 
-  // Cover
-  var s = parse(T.start), e = parse(T.end), nights = Math.round((e - s) / 864e5);
-  document.getElementById('meta').innerHTML =
-    '<span class="zh">' + md(s) + '–' + md(e) + (T.datesConfirmed ? '' : '（暫定）') + ' · ' + esc(T.people.zh) + ' · ' + nights + ' 晚</span>' +
-    '<span class="en">' + md(s) + '–' + md(e) + (T.datesConfirmed ? '' : ' (draft)') + ' · ' + esc(T.people.en) + ' · ' + nights + ' nights</span>';
-  var wip = document.getElementById('wip');
-  if (T.status) wip.innerHTML = bi(T.status); else wip.hidden = true;
-  document.getElementById('changes').innerHTML =
-    '<span class="lbl"><span class="zh">今次更新 · 第 ' + T.version + ' 版 · ' + esc(T.updated) + '</span><span class="en">What\'s new · v' + T.version + ' · ' + esc(T.updated) + '</span></span>' + bi(T.changes);
-  document.getElementById('footer-ver').innerHTML = '<span class="zh">第 ' + T.version + ' 版 · ' + esc(T.updated) + '</span><span class="en">Version ' + T.version + ' · ' + esc(T.updated) + '</span>';
-
-  // Place row (shared by day plans and restaurants)
-  function badge(st) { return st && STATUS[st] ? '<span class="badge b-' + st + '">' + bi(STATUS[st]) + '</span>' : ''; }
-  function acts(id, p) {
-    if (!p) return '<span></span>';
-    return '<span class="acts">' +
-      (p.ja ? '<button class="act" type="button" data-taxi="' + esc(id) + '"><span class="zh">的士</span><span class="en">Taxi</span></button>' : '') +
-      '<a class="act" href="' + esc(mapUrl(p)) + '" target="_blank" rel="noopener"><span class="zh">地圖</span><span class="en">Map</span></a>' +
-      (p.url ? '<a class="act" href="' + esc(p.url) + '" target="_blank" rel="noopener"><span class="zh">網站</span><span class="en">Web</span></a>' : '') +
-      '</span>';
+  // ---------- Pieces ----------
+  function thumb(id, fallback) {
+    var im = IMG[id];
+    return im ? '<img class="th" src="' + esc(im.src) + '" alt="" loading="lazy">'
+      : '<span class="th ph" aria-hidden="true">' + svg(foodById[id] ? 'food' : hotelById[id] ? 'hotels' : 'map') + '</span>';
+  }
+  function placeRow(it) {
+    var p = T.places[it.place];
+    var inner = '<span class="w"><b>' + (p ? bi(p) : bi(it.name)) + '</b>' + badge(it.status) + (it.sub ? '<small>' + bi(it.sub) + '</small>' : '') + '</span>';
+    var t = it.time ? '<span class="t">' + bi(it.time) + '</span>' : '';
+    if (!p) return '<div class="lrow slim' + (t ? ' timed' : '') + '" style="grid-template-columns:' + (t ? 'auto 1fr' : '1fr') + '">' + t + inner + '</div>';
+    return '<a class="lrow' + (t ? ' timed' : '') + '" href="#/place/' + esc(it.place) + '">' + t + thumb(it.place) + inner + svg('chev', 'chev') + '</a>';
+  }
+  function foodRow(r) {
+    var p = T.places[r.place];
+    return '<a class="lrow slim" href="#/place/' + esc(r.place) + '"><span class="w"><b>' + bi(p) + '</b>' + badge(r.status) +
+      '<small>' + bi(r.kind) + '</small>' + (r.price ? '<span class="price">' + bi(r.price) + '</span>' : '') +
+      '</span>' + svg('chev', 'chev') + '</a>';
   }
   function renderItems(items) {
     var out = '', buf = [];
-    function flush() { if (buf.length) { out += '<div class="card">' + buf.join('') + '</div>'; buf = []; } }
+    function flush() { if (buf.length) { out += '<div class="card rows">' + buf.join('') + '</div>'; buf = []; } }
     items.forEach(function (it) {
       if (it.type === 'leg') {
         flush();
@@ -409,118 +462,302 @@ body.locked { overflow: hidden; }
         var k = it.type === 'tbd' ? '<span class="zh">未決定</span><span class="en">Undecided</span>' : '<span class="zh">留意</span><span class="en">Note</span>';
         out += '<div class="flag ' + it.type + '"><span class="k">' + k + '</span><span>' + bi(it.text) + '</span></div>';
       } else {
-        var p = it.place ? T.places[it.place] : null;
-        buf.push('<div class="item' + (it.muted ? ' muted' : '') + '"><span class="t">' + bi(it.time) + '</span>' +
-          '<span class="w"><b>' + (p ? bi(p) : bi(it.name)) + '</b>' + badge(it.status) +
-          (it.sub ? '<small>' + bi(it.sub) + '</small>' : '') + '</span>' + acts(it.place, p) + '</div>');
+        buf.push(placeRow(it));
       }
     });
     flush();
-    return out;
+    return '<div class="stack">' + out + '</div>';
+  }
+  function credit(im) {
+    return im ? '<div class="credit"><span class="zh">相片</span><span class="en">Photo</span>: <a href="' + esc(im.page) + '" target="_blank" rel="noopener">' + esc(im.by) + '</a> · ' + esc(im.lic) + '</div>' : '';
   }
 
-  // Calendar, grouped into periods
-  function periodOf(date) {
-    for (var i = 0; i < (T.periods || []).length; i++) { var p = T.periods[i]; if (date >= p.from && date <= p.to) return p; }
-    return null;
-  }
-  var cal = '', curP, open = false;
-  T.calendar.forEach(function (c) {
-    var p = periodOf(c.date);
-    if (!open || p !== curP) {
-      if (open) cal += '</ul>';
-      if (p) cal += '<div class="period"><b>' + bi(p.title) + '</b><span>' + bi(p.hint) + '</span></div>';
-      else if (open) cal += '<div class="period"></div>';
-      cal += '<ul class="cal">'; open = true; curP = p;
+  // ---------- Screens ----------
+  var screens = {};
+
+  screens.home = function () {
+    var s = parse(T.start), e = parse(T.end), nights = Math.round((e - s) / 864e5);
+    var h = '<div class="eyebrow">Tokyo · December 2026</div>' +
+      '<h1><span class="zh">東京聖誕之旅</span><span class="en">Tokyo at Christmas</span></h1>' +
+      '<div class="meta"><span class="zh">' + md(s) + '–' + md(e) + (T.datesConfirmed ? '' : '（暫定）') + ' · ' + nights + ' 晚 · ' + esc(T.people.zh) + '</span>' +
+      '<span class="en">' + md(s) + '–' + md(e) + (T.datesConfirmed ? '' : ' (draft)') + ' · ' + nights + ' nights · ' + esc(T.people.en) + '</span></div>' +
+      (T.status ? '<div class="wip">' + bi(T.status) + '</div>' : '') +
+      '<div class="changes"><span class="lbl"><span class="zh">今次更新 · 第 ' + T.version + ' 版 · ' + esc(T.updated) + '</span><span class="en">What\'s new · v' + T.version + ' · ' + esc(T.updated) + '</span></span>' + bi(T.changes) + '</div>';
+
+    if (inTrip) {
+      var c = T.calendar.filter(function (x) { return x.date === todayStr; })[0];
+      var idea = c && c.plan ? ideaByCode[c.plan] : null;
+      h += '<div class="sec"><a class="card today-card" href="' + (idea ? '#/plan/' + idea.code : '#/calendar') + '"><span class="lbl"><span class="zh">今日</span><span class="en">TODAY</span></span>' +
+        '<b>' + (idea ? esc(idea.code) + ' · ' + bi(idea.title) : c && c.fixed ? bi(c.fixed) : bi({ zh: '自由活動', en: 'Free time' })) + '</b></a></div>';
     }
-    var d = parse(c.date), idea = c.plan ? ideaByCode[c.plan] : null;
-    var what = c.fixed ? '<b>' + bi(c.fixed) + '</b>'
-      : idea ? '<a href="#plan-' + idea.code + '"><b>' + esc(idea.code) + ' · ' + bi(idea.title) + '</b></a>'
-      : '<span class="open"><span class="zh">待排</span><span class="en">Not yet planned</span></span>';
-    var nts = (c.notes || []).map(function (n) { return '<span>' + bi(n) + '</span>'; }).join('');
-    cal += '<li' + (c.date === todayStr ? ' class="today"' : '') + ' id="date-' + c.date + '">' +
-      '<span class="dt"><b>' + d.getDate() + '</b><small><span class="zh">週' + WEEK_ZH[d.getDay()] + '</span><span class="en">' + WEEK_EN[d.getDay()] + '</span></small></span>' +
-      '<span class="what">' + what + (nts ? '<span class="nts">' + nts + '</span>' : '') + '</span></li>';
-  });
-  if (open) cal += '</ul>';
-  document.getElementById('cal').innerHTML = cal;
 
-  // Day plans, in groups
-  var groups = [
-    { key: ['suggested', 'either'], label: { zh: '建議組合', en: 'Suggested set' } },
-    { key: ['alt'], label: { zh: '後備選擇', en: 'Backups' } }
-  ];
-  var ih = '';
-  groups.forEach(function (g) {
-    var list = T.ideas.filter(function (x) { return g.key.indexOf(x.pick) >= 0; });
-    if (!list.length) return;
-    ih += '<div class="idea-group">' + bi(g.label) + '</div>';
-    list.forEach(function (x) {
-      var walk = '<span><span class="zh">行路</span><span class="en">Walking</span> <span class="walk" role="img" aria-label="' + x.walk + '/3">' +
-        [1, 2, 3].map(function (k) { return '<i class="' + (k <= x.walk ? 'on' : '') + '"></i>'; }).join('') + '</span></span>';
-      var hrs = typeof x.hours === 'string'
-        ? '<span><span class="zh">' + esc(x.hours) + ' 小時</span><span class="en">' + esc(x.hours) + ' hours</span></span>'
-        : '<span>' + bi(x.hours) + '</span>';
-      ih += '<section class="idea" id="plan-' + x.code + '">' +
-        '<div class="idea-head"><span class="code">' + esc(x.code) + '</span><h3>' + bi(x.title) + '</h3>' +
-        '<div class="idea-facts"><span class="pick ' + x.pick + '">' + bi(PICK[x.pick]) + '</span>' + hrs + walk + '</div></div>' +
-        (x.why ? '<p class="why">' + bi(x.why) + '</p>' : '') +
-        renderItems(x.items) + '</section>';
+    var img = function (id) { return IMG[id] ? '<img src="' + esc(IMG[id].src) + '" alt="" loading="lazy">' : ''; };
+    h += '<div class="sec tiles">' +
+      '<a class="tile" href="#/plans">' + img('skytree') + '<span><span class="zh">行程選擇</span><span class="en">Day plans</span><small><span class="zh">' + T.ideas.length + ' 個選擇</span><span class="en">' + T.ideas.length + ' options</span></small></span></a>' +
+      '<a class="tile" href="#/calendar">' + img('marunouchi') + '<span><span class="zh">日曆</span><span class="en">Calendar</span><small>' + md(s) + '–' + md(e) + '</small></span></a>' +
+      '<a class="tile" href="#/hotels">' + img('shibuya') + '<span><span class="zh">酒店</span><span class="en">Hotels</span><small><span class="zh">' + (T.hotels || []).length + ' 間候選</span><span class="en">' + (T.hotels || []).length + ' options</span></small></span></a>' +
+      '<a class="tile" href="#/food">' + img('tsukiji') + '<span><span class="zh">餐廳</span><span class="en">Food</span><small><span class="zh">' + foodRows.length + ' 間</span><span class="en">' + foodRows.length + ' places</span></small></span></a>' +
+      '</div>';
+
+    var open = [];
+    T.ideas.forEach(function (x) { x.items.forEach(function (it) { if (it.type === 'tbd') open.push({ code: x.code, text: it.text }); }); });
+    if (open.length) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">仲未決定</span><span class="en">Still to decide</span></h2>' +
+        '<div class="card todo-list">' + open.map(function (o) {
+          return '<a href="#/plan/' + o.code + '"><span class="code">' + esc(o.code) + '</span><span class="tx">' + bi(o.text) + '</span>' + svg('chev', 'chev') + '</a>';
+        }).join('') + '</div></div>';
+    }
+    h += '<div class="sec"><h2 class="sec-title"><span class="zh">留意</span><span class="en">Good to know</span></h2><ul class="card factlist">' +
+      (T.facts || []).map(function (f) { return '<li><b>' + bi(f.title) + '</b><span>' + bi(f.text) + '</span></li>'; }).join('') + '</ul></div>';
+    h += '<footer><span class="zh">第 ' + T.version + ' 版</span><span class="en">Version ' + T.version + '</span> · <a href="#/credits"><span class="zh">相片來源</span><span class="en">Photo credits</span></a></footer>';
+    return { title: null, html: h };
+  };
+
+  screens.plans = function () {
+    var groups = [
+      { key: ['suggested', 'either'], label: { zh: '建議組合', en: 'Suggested set' } },
+      { key: ['alt'], label: { zh: '後備選擇', en: 'Backups' } }
+    ];
+    var h = '<h1><span class="zh">行程選擇</span><span class="en">Day plans</span></h1>' +
+      '<p class="lede"><span class="zh">大約揀 7 至 8 個。撳入去睇每日去邊、做咩。想去邊個、唔想去邊個，講個英文字母就得，例如「A 好，H 唔使」。</span><span class="en">We\'ll pick about 7–8. Tap one to see where we\'d go and what to do. Just mention the letter, e.g. "A yes, skip H".</span></p>';
+    groups.forEach(function (g) {
+      var list = T.ideas.filter(function (x) { return g.key.indexOf(x.pick) >= 0; });
+      if (!list.length) return;
+      h += '<div class="group-lbl">' + bi(g.label) + '</div><div class="plan-cards">';
+      list.forEach(function (x) {
+        var im = planImage(x);
+        var stops = x.items.filter(function (it) { return it.place; }).map(function (it) { return T.places[it.place]; });
+        h += '<a class="card pcard" href="#/plan/' + x.code + '"><div class="img">' + (im ? '<img src="' + esc(im.src) + '" alt="" loading="lazy">' : '') +
+          '<span class="code">' + esc(x.code) + '</span></div><div class="body"><h3>' + bi(x.title) + '</h3>' +
+          '<div class="facts-row"><span class="pick ' + x.pick + '">' + bi(PICK[x.pick]) + '</span>' + hoursOf(x) + walkBar(x.walk) + '</div>' +
+          '<div class="stops"><span class="zh">' + stops.map(function (p) { return esc(p.zh); }).join(' → ') + '</span><span class="en">' + stops.map(function (p) { return esc(p.en); }).join(' → ') + '</span></div>' +
+          '</div></a>';
+      });
+      h += '</div>';
     });
-  });
-  document.getElementById('idea-list').innerHTML = ih;
+    return { title: { zh: '行程選擇', en: 'Day plans' }, html: h };
+  };
 
-  // Hotels
-  document.getElementById('hotel-list').innerHTML = (T.hotels || []).map(function (h) {
-    var p = T.places[h.place];
-    return '<div class="hotel"><div class="hotel-top"><span class="w"><b>' + bi(p) + '</b>' + badge(h.status) +
-      '<small>' + bi(h.area) + '</small></span>' + acts(h.place, p) + '</div>' +
-      '<ul>' + (h.facts || []).map(function (f) { return '<li><span>' + bi(f) + '</span></li>'; }).join('') + '</ul>' +
-      (h.note ? '<p class="hnote">' + bi(h.note) + '</p>' : '') + '</div>';
+  screens.plan = function (code) {
+    var x = ideaByCode[code];
+    if (!x) return screens.notfound();
+    var im = planImage(x);
+    var h = '<div class="has-code">' + (im ? '<div class="hero"><img src="' + esc(im.src) + '" alt=""><span class="code">' + esc(x.code) + '</span></div>' + credit(im) : '') +
+      '<div class="title-block"><h1>' + (im ? '' : esc(x.code) + ' · ') + bi(x.title) + '</h1>' +
+      '<div class="facts-row"><span class="pick ' + x.pick + '">' + bi(PICK[x.pick]) + '</span>' + hoursOf(x) + walkBar(x.walk) + '</div></div>' +
+      (x.why ? '<p class="prose">' + bi(x.why) + '</p>' : '') + '</div>';
+    h += '<div class="sec"><h2 class="sec-title"><span class="zh">當日路線</span><span class="en">The day</span></h2>' + renderItems(x.items) + '</div>';
+    var eats = foodRows.filter(function (f) { return f.plan === code; });
+    if (eats.length) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">附近食咩</span><span class="en">Food nearby</span></h2><div class="card rows">' +
+        eats.map(function (f) { return foodRow(f.r); }).join('') + '</div></div>';
+    }
+    var dates = T.calendar.filter(function (c) { return c.plan === code; });
+    if (dates.length) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">排咗喺</span><span class="en">Scheduled on</span></h2><div class="chips">' +
+        dates.map(function (c) { return '<a class="chip" href="#/calendar">' + md(parse(c.date)) + '</a>'; }).join('') + '</div></div>';
+    }
+    return { title: { zh: x.code + ' · ' + x.title.zh, en: x.code + ' · ' + x.title.en }, html: h };
+  };
+
+  screens.place = function (id) {
+    var p = T.places[id];
+    if (!p) return screens.notfound();
+    var im = IMG[id], info = INFO[id], food = foodById[id], hotel = hotelById[id];
+    var h = (im ? '<div class="hero"><img src="' + esc(im.src) + '" alt=""></div>' + credit(im) : '') +
+      '<div class="title-block"><h1>' + bi(p) + '</h1>' +
+      (p.ja && p.ja !== p.zh ? '<div class="ja" lang="ja">' + esc(p.ja) + '</div>' : '') +
+      (food ? '<div class="facts-row">' + (food.r.status ? badge(food.r.status).replace('margin-left: 6px', '') : '') + '<span>' + bi(food.r.kind) + '</span></div>' : '') +
+      (hotel ? '<div class="facts-row">' + badge(hotel.status) + '<span>' + bi(hotel.area) + '</span></div>' : '') +
+      '</div>';
+
+    if (info && info.about) h += '<p class="prose">' + bi(info.about) + '</p>';
+
+    // Buttons
+    var acts = '';
+    if (p.ja) acts += '<button class="btn primary" type="button" data-taxi="' + esc(id) + '">' + svg('taxi') + '<span><span class="zh">的士卡</span><span class="en">Taxi card</span></span></button>';
+    acts += '<a class="btn" href="' + esc(mapUrl(p)) + '" target="_blank" rel="noopener">' + svg(im ? 'map' : 'photo') +
+      (im ? '<span><span class="zh">地圖</span><span class="en">Map</span></span>' : '<span><span class="zh">地圖・睇相</span><span class="en">Map & photos</span></span>') + '</a>';
+    if (p.url) acts += '<a class="btn" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + svg('web') + '<span><span class="zh">網站</span><span class="en">Website</span></span></a>';
+    h += '<div class="actions">' + acts + '</div>';
+
+    if (food) {
+      var kv = '';
+      if (food.r.price) kv += '<div class="kv"><small><span class="zh">價錢</span><span class="en">Price</span></small><span>' + bi(food.r.price) + '</span></div>';
+      if (food.r.note) kv += '<div class="kv"><small><span class="zh">留意</span><span class="en">Note</span></small><span>' + bi(food.r.note) + '</span></div>';
+      if (food.area) kv += '<div class="kv"><small><span class="zh">地區</span><span class="en">Area</span></small><span>' + bi(food.area) + '</span></div>';
+      if (kv) h += '<div class="sec card">' + kv + '</div>';
+    }
+    if (hotel) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">重點</span><span class="en">Key facts</span></h2><ul class="card blist">' +
+        hotel.facts.map(function (f) { return '<li><span>' + bi(f) + '</span></li>'; }).join('') + '</ul>' +
+        (hotel.note ? '<p class="prose">' + bi(hotel.note) + '</p>' : '') + '</div>';
+    }
+    if (info && info.todo && info.todo.length) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">做咩好</span><span class="en">What to do</span></h2><ul class="card blist">' +
+        info.todo.map(function (t) { return '<li><span>' + bi(t) + '</span></li>'; }).join('') + '</ul></div>';
+    }
+    if (info && info.tips && info.tips.length) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">小貼士</span><span class="en">Tips</span></h2><ul class="card blist tips">' +
+        info.tips.map(function (t) { return '<li><span>' + bi(t) + '</span></li>'; }).join('') + '</ul></div>';
+    }
+    var plans = plansWith(id);
+    var fplan = food && food.plan && ideaByCode[food.plan] && plans.indexOf(ideaByCode[food.plan]) < 0 ? [ideaByCode[food.plan]] : [];
+    plans = plans.concat(fplan);
+    if (plans.length) {
+      h += '<div class="sec"><h2 class="sec-title"><span class="zh">喺邊個行程</span><span class="en">In day plans</span></h2><div class="chips">' +
+        plans.map(function (x) { return '<a class="chip" href="#/plan/' + x.code + '"><b>' + esc(x.code) + '</b>' + bi(x.title) + '</a>'; }).join('') + '</div></div>';
+    }
+    return { title: p, html: h };
+  };
+
+  screens.calendar = function () {
+    function periodOf(date) {
+      for (var i = 0; i < (T.periods || []).length; i++) { var p = T.periods[i]; if (date >= p.from && date <= p.to) return p; }
+      return null;
+    }
+    var h = '<h1><span class="zh">日曆</span><span class="en">Calendar</span></h1>' +
+      '<p class="lede"><span class="zh">揀好行程之後會排入日子。</span><span class="en">Day plans get placed on dates once chosen.</span></p>';
+    var curP, open = false;
+    T.calendar.forEach(function (c) {
+      var p = periodOf(c.date);
+      if (!open || p !== curP) {
+        if (open) h += '</ul>';
+        if (p) h += '<div class="period"><b>' + bi(p.title) + '</b><span>' + bi(p.hint) + '</span></div>';
+        else if (open) h += '<div class="period"></div>';
+        h += '<ul class="card cal">'; open = true; curP = p;
+      }
+      var d = parse(c.date), idea = c.plan ? ideaByCode[c.plan] : null;
+      var what = c.fixed ? '<b>' + bi(c.fixed) + '</b>'
+        : idea ? '<a href="#/plan/' + idea.code + '"><b>' + esc(idea.code) + ' · ' + bi(idea.title) + '</b></a>'
+        : '<span class="open"><span class="zh">待排</span><span class="en">Not yet planned</span></span>';
+      var nts = (c.notes || []).map(function (n) { return '<span>' + bi(n) + '</span>'; }).join('');
+      var isToday = c.date === todayStr;
+      h += '<li' + (isToday ? ' class="today"' : '') + ' id="date-' + c.date + '">' +
+        '<span class="dt"><b>' + d.getDate() + '</b><small><span class="zh">週' + WEEK_ZH[d.getDay()] + (isToday ? ' · 今日' : '') + '</span><span class="en">' + WEEK_EN[d.getDay()] + (isToday ? ' · Today' : '') + '</span></small></span>' +
+        '<span class="what">' + what + (nts ? '<span class="nts">' + nts + '</span>' : '') + '</span></li>';
+    });
+    if (open) h += '</ul>';
+    return { title: { zh: '日曆', en: 'Calendar' }, html: h, after: function () {
+      if (inTrip) { var el = document.getElementById('date-' + todayStr); if (el) el.scrollIntoView({ block: 'center' }); }
+    } };
+  };
+
+  screens.hotels = function () {
+    var h = '<h1><span class="zh">酒店</span><span class="en">Hotels</span></h1>' +
+      '<p class="lede"><span class="zh">Vanjai 揀嘅候選，未訂。要兩間房，等航班同箱根決定咗先比價。</span><span class="en">Vanjai\'s candidates, not booked. We need two rooms; we\'ll compare prices once flights and Hakone are decided.</span></p><div class="stack">';
+    (T.hotels || []).forEach(function (ho) {
+      var p = T.places[ho.place];
+      h += '<a class="card hcard" href="#/place/' + esc(ho.place) + '"><div class="body"><b>' + bi(p) + '</b>' +
+        '<small>' + bi(ho.area) + '</small>' + (ho.note ? '<p>' + bi(ho.note) + '</p>' : '') +
+        '<span class="more-row"><span><span class="zh">睇詳情</span><span class="en">Details</span></span>' + svg('chev', 'chev') + '</span></div></a>';
+    });
+    return { title: { zh: '酒店', en: 'Hotels' }, html: h + '</div>' };
+  };
+
+  screens.food = function () {
+    var h = '<h1><span class="zh">餐廳</span><span class="en">Restaurants</span></h1>' +
+      '<p class="lede"><span class="zh">全部未訂。價錢係每位，未計飲品，可能會變。撳入去睇詳情同相片。</span><span class="en">None booked. Prices per person before drinks, and may change. Tap for details and photos.</span></p>';
+    T.food.forEach(function (g) {
+      h += '<div class="food-group"><h3>' + bi(g.title) + '</h3>' + (g.intro ? '<p class="intro">' + bi(g.intro) + '</p>' : '');
+      if (g.empty) h += '<div class="empty-slot">' + bi(g.empty) + '</div>';
+      if (g.items && g.items.length) h += '<div class="card rows">' + g.items.map(foodRow).join('') + '</div>';
+      (g.sub || []).forEach(function (sg) {
+        h += '<details class="more"><summary><span>' + bi(sg.title) + (sg.plan ? ' <span class="plan-tag">' + esc(sg.plan) + '</span>' : '') + '</span>' +
+          '<span class="cnt"><span class="zh">' + sg.items.length + ' 間</span><span class="en">' + sg.items.length + '</span></span></summary>' +
+          '<div class="rows">' + sg.items.map(foodRow).join('') + '</div></details>';
+      });
+      h += '</div>';
+    });
+    return { title: { zh: '餐廳', en: 'Restaurants' }, html: h };
+  };
+
+  screens.credits = function () {
+    var h = '<h1><span class="zh">相片來源</span><span class="en">Photo credits</span></h1>' +
+      '<p class="lede"><span class="zh">全部相片嚟自 Wikimedia Commons，按各自授權使用。</span><span class="en">All photos are from Wikimedia Commons, used under their licences.</span></p><ul class="card credits">';
+    Object.keys(IMG).forEach(function (id) {
+      var im = IMG[id], p = T.places[id];
+      h += '<li><b>' + (p ? bi(p) : esc(id)) + '</b> · <a href="' + esc(im.page) + '" target="_blank" rel="noopener">' + esc(im.by) + '</a> · ' + esc(im.lic) + '</li>';
+    });
+    return { title: { zh: '相片來源', en: 'Photo credits' }, html: h + '</ul>' };
+  };
+
+  screens.notfound = function () {
+    return { title: null, html: '<p class="lede" style="margin-top:24px"><span class="zh">搵唔到呢頁。</span><span class="en">Page not found.</span> <a href="#/"><span class="zh">返首頁</span><span class="en">Home</span></a></p>' };
+  };
+
+  // ---------- Tabs ----------
+  var TABS = [
+    { id: 'home', href: '#/', l: { zh: '首頁', en: 'Home' } },
+    { id: 'plans', href: '#/plans', l: { zh: '行程', en: 'Plans' } },
+    { id: 'calendar', href: '#/calendar', l: { zh: '日曆', en: 'Calendar' } },
+    { id: 'hotels', href: '#/hotels', l: { zh: '酒店', en: 'Hotels' } },
+    { id: 'food', href: '#/food', l: { zh: '餐廳', en: 'Food' } }
+  ];
+  document.getElementById('tabs').innerHTML = TABS.map(function (t) {
+    return '<a href="' + t.href + '" data-tab="' + t.id + '">' + svg(t.id) + '<span>' + bi(t.l) + '</span></a>';
   }).join('');
 
-  // Restaurants
-  function foodRow(r) {
-    var p = T.places[r.place];
-    return '<div class="item"><span class="t">' + (r.plan ? '<a class="plan-link" href="#plan-' + r.plan + '"><span class="zh">配</span><span class="en">Plan</span><span class="plan-tag">' + esc(r.plan) + '</span></a>' : '') + '</span>' +
-      '<span class="w"><b>' + bi(p) + '</b>' + badge(r.status) +
-      '<small>' + bi(r.kind) + '</small>' +
-      (r.price ? '<span class="price">' + bi(r.price) + '</span>' : '') +
-      (r.note ? '<small>' + bi(r.note) + '</small>' : '') + '</span>' + acts(r.place, p) + '</div>';
+  // ---------- Router ----------
+  var scrollMem = {}, lastTab = 'home', depth = 0, current = null;
+  function routeOf(hash) {
+    var parts = (hash || '').replace(/^#\/?/, '').split('/').filter(Boolean);
+    return { name: parts[0] || 'home', arg: parts[1] ? decodeURIComponent(parts[1]) : null };
   }
-  var fh = '';
-  T.food.forEach(function (g) {
-    fh += '<div class="food-group"><h3>' + bi(g.title) + '</h3>' + (g.intro ? '<p class="intro">' + bi(g.intro) + '</p>' : '');
-    if (g.empty) fh += '<div class="empty-slot">' + bi(g.empty) + '</div>';
-    if (g.items && g.items.length) fh += '<div class="card">' + g.items.map(foodRow).join('') + '</div>';
-    (g.sub || []).forEach(function (sg) {
-      fh += '<details class="more"><summary><span>' + bi(sg.title) + (sg.plan ? ' <span class="plan-tag">' + esc(sg.plan) + '</span>' : '') + '</span>' +
-        '<span class="cnt"><span class="zh">' + sg.items.length + ' 間</span><span class="en">' + sg.items.length + '</span></span></summary>' +
-        '<div class="card">' + sg.items.map(foodRow).join('') + '</div></details>';
+  function tabFor(r) {
+    if (r.name === 'plan') return 'plans';
+    if (r.name === 'place') {
+      if (hotelById[r.arg]) return 'hotels';
+      if (foodById[r.arg] && lastTab === 'food') return 'food';
+      return lastTab;
+    }
+    if (r.name === 'credits') return 'home';
+    return TABS.some(function (t) { return t.id === r.name; }) ? r.name : 'home';
+  }
+  function render() {
+    if (current != null) scrollMem[current] = window.scrollY;
+    var hash = location.hash || '#/';
+    var r = routeOf(hash);
+    var fn = screens[r.name] || screens.notfound;
+    var out = fn(r.arg);
+    view.innerHTML = out.html;
+    var isRoot = TABS.some(function (t) { return t.href === hash || (t.id === 'home' && (hash === '#/' || hash === '#')); });
+
+    // Top bar
+    var titleEl = document.getElementById('top-title');
+    titleEl.innerHTML = out.title ? bi(out.title) : '';
+    document.getElementById('back-slot').innerHTML = isRoot ? '' :
+      '<button class="back" type="button" id="back">' + svg('back') + '<span class="zh">返回</span><span class="en">Back</span></button>';
+    var b = document.getElementById('back');
+    if (b) b.addEventListener('click', function () {
+      if (depth > 0) history.back();
+      else location.hash = r.name === 'plan' ? '#/plans' : r.name === 'place' ? (TABS.filter(function (t) { return t.id === tabFor(r); })[0] || TABS[0]).href : '#/';
     });
-    fh += '</div>';
+
+    // Tabs
+    var tab = tabFor(r);
+    if (TABS.some(function (t) { return t.id === r.name; })) lastTab = r.name;
+    document.querySelectorAll('.tabs a').forEach(function (a) {
+      if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+
+    document.title = (out.title ? (root.getAttribute('data-lang') === 'en' ? out.title.en : out.title.zh) + ' · ' : '') + '東京聖誕之旅 2026';
+    current = hash;
+    window.scrollTo(0, scrollMem[hash] || 0);
+    if (out.after && !scrollMem[hash]) out.after();
+    onScroll();
+  }
+  window.addEventListener('hashchange', function (e) {
+    // Going deeper than a tab root counts as a step we can go back from
+    var r = routeOf(location.hash);
+    depth = TABS.some(function (t) { return t.id === r.name; }) || r.name === 'home' ? 0 : depth + 1;
+    render();
   });
-  document.getElementById('food-list').innerHTML = fh;
+  var topEl = document.getElementById('top');
+  function onScroll() { topEl.classList.toggle('scrolled', window.scrollY > 4); }
+  window.addEventListener('scroll', onScroll, { passive: true });
 
-  // Facts
-  document.getElementById('fact-list').innerHTML = (T.facts || []).map(function (f) {
-    return '<li><b>' + bi(f.title) + '</b><span>' + bi(f.text) + '</span></li>';
-  }).join('');
-
-  // Section chips
-  var sections = [
-    { id: 'calendar', l: { zh: '日曆', en: 'Calendar' } },
-    { id: 'hotels', l: { zh: '酒店', en: 'Hotels' } },
-    { id: 'ideas', l: { zh: '行程選擇', en: 'Day plans' } },
-    { id: 'food', l: { zh: '餐廳', en: 'Food' } },
-    { id: 'notes', l: { zh: '留意', en: 'Notes' } }
-  ];
-  var inTrip = todayStr >= T.start && todayStr <= T.end;
-  document.getElementById('chips').innerHTML =
-    (inTrip ? '<a class="chip today" href="#date-' + todayStr + '" data-target="none"><span class="dot"></span><span class="zh">今日</span><span class="en">Today</span></a>' : '') +
-    sections.map(function (x) { return '<a class="chip" href="#' + x.id + '" data-target="' + x.id + '">' + bi(x.l) + '</a>'; }).join('');
-
-  // Language
+  // ---------- Language ----------
   var lbtns = document.querySelectorAll('.lang button');
   function setLang(l) {
     root.setAttribute('data-lang', l);
@@ -531,15 +768,16 @@ body.locked { overflow: hidden; }
   try { var saved = localStorage.getItem('trip-lang'); if (saved === 'en' || saved === 'zh') setLang(saved); } catch (err) {}
   lbtns.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.set); }); });
 
-  // Taxi card
-  var taxi = document.getElementById('taxi'), opener = null, mainEl = document.querySelector('main'), coverEl = document.querySelector('.cover'), barEl = document.querySelector('.picker');
-  function setInert(on) { [mainEl, coverEl, barEl].forEach(function (el) { if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); }); }
+  // ---------- Taxi card ----------
+  var taxi = document.getElementById('taxi'), opener = null;
+  var outside = [view, topEl, document.querySelector('.tabs')];
+  function setInert(on) { outside.forEach(function (el) { if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); }); }
   function openTaxi(id, btn) {
     var p = T.places[id]; if (!p) return;
     opener = btn || null;
-    setInert(true); document.body.classList.add('locked');
     document.getElementById('taxi-ja').textContent = p.ja;
     document.getElementById('taxi-map').href = mapUrl(p);
+    setInert(true); document.body.classList.add('locked');
     taxi.hidden = false;
     document.getElementById('taxi-close').focus();
   }
@@ -549,30 +787,8 @@ body.locked { overflow: hidden; }
   taxi.addEventListener('click', function (ev) { if (ev.target === taxi) closeTaxi(); });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && !taxi.hidden) closeTaxi(); });
 
-  // Highlight the chip for the section in view
-  var chipEls = Array.prototype.slice.call(document.querySelectorAll('.chip[data-target]'));
-  var bar = document.getElementById('chips');
-  function mark(id) {
-    chipEls.forEach(function (c) {
-      var on = c.dataset.target === id;
-      if (on && !c.classList.contains('on')) bar.scrollTo({ left: Math.max(0, c.offsetLeft - 18), behavior: 'smooth' });
-      c.classList.toggle('on', on);
-      if (on) c.setAttribute('aria-current', 'location'); else c.removeAttribute('aria-current');
-    });
-  }
-  function onScroll() {
-    var cur = sections[0].id;
-    sections.forEach(function (x) { var el = document.getElementById(x.id); if (el && el.getBoundingClientRect().top < 120) cur = x.id; });
-    mark(cur);
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  // During the trip, open on today's date
-  if (inTrip && !location.hash) {
-    var el = document.getElementById('date-' + todayStr);
-    if (el) setTimeout(function () { el.scrollIntoView({ block: 'center' }); }, 50);
-  }
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  render();
 })();
 </script>
 </body>

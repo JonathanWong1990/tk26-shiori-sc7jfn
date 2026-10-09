@@ -1,0 +1,26 @@
+// Photos: free-licensed from Wikimedia Commons, resized and stored in img/. Credit is shown under each photo.
+window.PLACE_IMG = {
+  sensoji: {"src": "img/sensoji.jpg", "by": "Zairon", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Senso-ji_Kaminarimon_6.jpg"},
+  sumida: {"src": "img/sumida.jpg", "by": "Guilhem Vellut from Annecy, France", "lic": "CC BY 2.0", "page": "https://commons.wikimedia.org/wiki/File:Sumida_Sakura_Festival_@_Sumida_Park_@_Asakusa_(13582354053).jpg"},
+  skytree: {"src": "img/skytree.jpg", "by": "Basile Morin", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Asahi_Breweries_headquarters_building_with_the_Asahi_Flame_and_Skytree_at_blue_hour_with_full_moon,_Sumida-ku,_Tokyo,_Japan.jpg"},
+  meiji: {"src": "img/meiji.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:September_2024_Meiji_Jingu_10.jpg"},
+  omotesando: {"src": "img/omotesando.jpg", "by": "gog.creator", "lic": "CC BY 4.0", "page": "https://commons.wikimedia.org/wiki/File:Omotesando_Avenue_at_sunset_from_pedestrian_bridge,_Jingumae,_Shibuya,_Tokyo.jpg"},
+  shibuya: {"src": "img/shibuya.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Shibuya_scramble_crossing_during_Halloween_2023,_actually_less_crowded_than_usual,_high_police_presence_2.jpg"},
+  tsukiji: {"src": "img/tsukiji.jpg", "by": "Aw1805", "lic": "CC BY-SA 3.0", "page": "https://commons.wikimedia.org/wiki/File:Tsukiji_Outer_Market_2.jpg"},
+  ginza: {"src": "img/ginza.jpg", "by": "Supanut Arunoprayote", "lic": "CC BY 4.0", "page": "https://commons.wikimedia.org/wiki/File:Ginza_Wako_20241021.jpg"},
+  marunouchi: {"src": "img/marunouchi.jpg", "by": "Basile Morin", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Marunouchi_Central_Plaza_with_blue_sky,_Tokyo_station_and_Shin-Marunouchi_Building,_panoramic_view_from_JP_Tower,_Tokyo,_Japan.jpg"},
+  toyosu: {"src": "img/toyosu.jpg", "by": "江戸村のとくぞう", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Toyosu_fish_market-4b.jpg"},
+  borderless: {"src": "img/borderless.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Azabudai_Hills_4.jpg"},
+  tower: {"src": "img/tower.jpg", "by": "Ermell", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Japan-Tokyo-tower-1024.jpg"},
+  shiba: {"src": "img/shiba.jpg", "by": "Qian2007", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Tokyo_Tower_2024.jpg"},
+  disney: {"src": "img/disney.jpg", "by": "Laika ac from USA", "lic": "CC BY-SA 2.0", "page": "https://commons.wikimedia.org/wiki/File:Laika_ac_Tokyo_DisneySea_(7861651212).jpg"},
+  hakoneShrine: {"src": "img/hakoneShrine.jpg", "by": "Guilhem Vellut from Annecy, France", "lic": "CC BY 2.0", "page": "https://commons.wikimedia.org/wiki/File:Torii_on_Lake_Ashi_@_Hakone_Shrine_(13776878594).jpg"},
+  hachimangu: {"src": "img/hachimangu.jpg", "by": "Ocdp", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Tsurugaoka_Hachimangu_001.jpg"},
+  daibutsu: {"src": "img/daibutsu.jpg", "by": "Suicasmo", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Kamakura_Daibutsu_20170210.jpg"},
+  minatomirai: {"src": "img/minatomirai.jpg", "by": "名古屋太郎", "lic": "CC BY-SA 3.0", "page": "https://commons.wikimedia.org/wiki/File:070203_MM21%26FUJI.jpg"},
+  chinatown: {"src": "img/chinatown.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Yokohama_Chinatown_32.jpg"},
+  kichijoji: {"src": "img/kichijoji.jpg", "by": "ARandomName123", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Inokashira_park_pond_2024.jpg"},
+  yanaka: {"src": "img/yanaka.jpg", "by": "Christophe95", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Yanaka_Ginza_2.jpg"},
+  akiba: {"src": "img/akiba.jpg", "by": "ElHeineken", "lic": "CC BY 4.0", "page": "https://commons.wikimedia.org/wiki/File:Akihabara_Night.jpg"},
+  nakano: {"src": "img/nakano.jpg", "by": "fletcherjcm", "lic": "CC BY-SA 2.0", "page": "https://commons.wikimedia.org/wiki/File:Mandarake_(4970180671).jpg"}
+};

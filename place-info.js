@@ -17,7 +17,7 @@ window.PLACE_INFO = {
     ]
   },
   sumida: {
-    about: { zh: "淺草同晴空塔之間嘅河邊公園。由淺草過河，一路行一路望住晴空塔。（相片係春天櫻花，12 月冇櫻花。）", en: "Riverside park between Asakusa and Skytree, with Skytree in view the whole way. (Photo shows spring blossoms; none in December.)" },
+    about: { zh: "淺草同晴空塔之間嘅河邊公園。由淺草過河，一路行一路望住晴空塔。", en: "Riverside park between Asakusa and Skytree, with Skytree in view the whole way." },
     todo: [
       { zh: "沿隅田川散步", en: "Stroll along the Sumida River" },
       { zh: "行「隅田河步道」：鐵路橋旁邊嘅行人橋", en: "Cross the Sumida River Walk, a footbridge beside the railway bridge" },
@@ -64,7 +64,7 @@ window.PLACE_INFO = {
     ]
   },
   shibuya: {
-    about: { zh: "全世界最繁忙嘅十字路口，一次綠燈可以有過千人一齊過馬路。四周都係大電視牆同商場。", en: "The world's busiest pedestrian crossing, with up to a thousand people per green light, surrounded by giant screens and malls." },
+    about: { zh: "全世界最繁忙嘅十字路口，一次綠燈可以有成千上萬人一齊過馬路。四周都係大電視牆同商場。", en: "The world's busiest pedestrian crossing, with thousands crossing on a single green light, surrounded by giant screens and malls." },
     todo: [
       { zh: "親身過一次十字路口", en: "Walk the scramble crossing yourself" },
       { zh: "上 Shibuya Sky 天台睇夜景", en: "See the night view from the Shibuya Sky rooftop" },
@@ -271,7 +271,7 @@ window.PLACE_INFO = {
     todo: [
       { zh: "繞湖散步，划天鵝船", en: "Walk around the pond or pedal a swan boat" },
       { zh: "行吉祥寺站附近商店街同咖啡店", en: "Browse the shopping streets and cafés near the station" },
-      { zh: "公園南邊有吉卜力美術館", en: "The Ghibli Museum is at the park's south end" }
+      { zh: "公園西邊有吉卜力美術館", en: "The Ghibli Museum is on the park's west side" }
     ],
     tips: [
       { zh: "吉卜力美術館一定要預早訂飛", en: "The Ghibli Museum needs tickets booked well ahead" }

@@ -14,11 +14,11 @@
 //   leg dur:    "80 min", "~40 min" (~ = approx, shown as 約), "2.5h"
 
 window.TRIP = {
-  version: 6,
+  version: 7,
   updated: "2026-10-09",
   changes: {
-    zh: "新設計：下面有分頁（首頁、行程、日曆、酒店、餐廳）。每個地方都有自己一頁，有相片、介紹、做咩好同小貼士。撳「的士卡」可以俾司機睇日文地址。",
-    en: "New design: tabs along the bottom (Home, Plans, Calendar, Hotels, Food). Every place has its own page with a photo, what it is, what to do and tips. Tap Taxi card to show the driver the Japanese name."
+    zh: "下面有分頁（首頁、行程、日曆、酒店、餐廳）。每個地方都有自己一頁，有相片、介紹、做咩好同小貼士。撳「的士卡」可以俾司機睇日文名。餐廳新增「Christine 想食嘅」。",
+    en: "Tabs along the bottom (Home, Plans, Calendar, Hotels, Food). Every place has its own page with a photo, what it is, what to do and tips. Tap Taxi card to show the driver the Japanese name. New in Food: Christine's picks."
   },
   status: { zh: "計劃中 · 全部未訂", en: "Still planning · nothing booked" },
   start: "2026-12-20",
@@ -89,7 +89,7 @@ window.TRIP = {
     sugalabo:  { zh: "SUGALABO", en: "SUGALABO", q: "SUGALABO Kamiyacho", url: "https://sugalabo.com/" },
     hommage:   { zh: "Hommage", en: "Hommage", q: "Hommage Asakusa", url: "https://www.hommage-arai.com/en/" },
     metis:     { zh: "Métis", en: "Métis", q: "Metis Roppongi", url: "https://www.tablecheck.com/en/shops/metis-roppongi/reserve" },
-    bia:       { zh: "Bia 美会", en: "Bia", q: "Bia Roppongi Nogizaka", url: "https://www.tablecheck.com/zh-TW/bia-roppongi" },
+    bia:       { zh: "Bia", en: "Bia", q: "Bia Roppongi Nogizaka", url: "https://www.tablecheck.com/zh-TW/bia-roppongi" },
     heritage:  { zh: "Héritage by Kei Kobayashi", en: "Héritage by Kei Kobayashi", q: "Heritage by Kei Kobayashi Tokyo Midtown", url: "https://www.heritagebykei.com/restaurants-in-tokyo" },
     leffervescence: { zh: "L'Effervescence", en: "L'Effervescence", q: "L'Effervescence Nishiazabu", url: "https://www.leffervescence.jp/en/" },
     asahina:   { zh: "ASAHINA Gastronome", en: "ASAHINA Gastronome", q: "ASAHINA Gastronome Kayabacho", url: "https://asahinagastronome.com/en/" },
@@ -307,8 +307,8 @@ window.TRIP = {
       ]
     },
     {
-      title: { zh: "留一餐俾 Christine 揀", en: "One dinner for Christine" },
-      empty: { zh: "Christine 想食咩？話我哋知，我哋配埋附近嗰日。", en: "What would Christine like? Tell us and we'll match it to a nearby day." }
+      title: { zh: "Christine 想食嘅", en: "Christine's picks" },
+      empty: { zh: "Christine 有冇想食嘅？話我哋知，我哋會排入行程。", en: "Anywhere Christine would like to eat? Let us know and we'll fit it in." }
     },
     {
       title: { zh: "更多晚餐候選", en: "More dinner options" },

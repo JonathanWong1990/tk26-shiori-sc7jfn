@@ -1,9 +1,9 @@
 // Photos: free-licensed from Wikimedia Commons, resized and stored in img/. Credit is shown under each photo.
 window.PLACE_IMG = {
   sensoji: {"src": "img/sensoji.jpg", "by": "Zairon", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Senso-ji_Kaminarimon_6.jpg"},
-  sumida: {"src": "img/sumida.jpg", "by": "Guilhem Vellut from Annecy, France", "lic": "CC BY 2.0", "page": "https://commons.wikimedia.org/wiki/File:Sumida_Sakura_Festival_@_Sumida_Park_@_Asakusa_(13582354053).jpg"},
+  sumida: {"src": "img/sumida.jpg", "by": "Suicasmo", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Tokyo_Skytree_20170208.jpg"},
   skytree: {"src": "img/skytree.jpg", "by": "Basile Morin", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Asahi_Breweries_headquarters_building_with_the_Asahi_Flame_and_Skytree_at_blue_hour_with_full_moon,_Sumida-ku,_Tokyo,_Japan.jpg"},
-  meiji: {"src": "img/meiji.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:September_2024_Meiji_Jingu_10.jpg"},
+  meiji: {"src": "img/meiji.jpg", "by": "Asanagi", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Meiji_Shrine_Minami-tamagaki-torii_2023-01-26.jpg"},
   omotesando: {"src": "img/omotesando.jpg", "by": "gog.creator", "lic": "CC BY 4.0", "page": "https://commons.wikimedia.org/wiki/File:Omotesando_Avenue_at_sunset_from_pedestrian_bridge,_Jingumae,_Shibuya,_Tokyo.jpg"},
   shibuya: {"src": "img/shibuya.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Shibuya_scramble_crossing_during_Halloween_2023,_actually_less_crowded_than_usual,_high_police_presence_2.jpg"},
   tsukiji: {"src": "img/tsukiji.jpg", "by": "Aw1805", "lic": "CC BY-SA 3.0", "page": "https://commons.wikimedia.org/wiki/File:Tsukiji_Outer_Market_2.jpg"},
@@ -18,7 +18,7 @@ window.PLACE_IMG = {
   hachimangu: {"src": "img/hachimangu.jpg", "by": "Ocdp", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Tsurugaoka_Hachimangu_001.jpg"},
   daibutsu: {"src": "img/daibutsu.jpg", "by": "Suicasmo", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Kamakura_Daibutsu_20170210.jpg"},
   minatomirai: {"src": "img/minatomirai.jpg", "by": "名古屋太郎", "lic": "CC BY-SA 3.0", "page": "https://commons.wikimedia.org/wiki/File:070203_MM21%26FUJI.jpg"},
-  chinatown: {"src": "img/chinatown.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Yokohama_Chinatown_32.jpg"},
+  chinatown: {"src": "img/chinatown.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Yokohama_Chinatown_4.jpg"},
   kichijoji: {"src": "img/kichijoji.jpg", "by": "ARandomName123", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Inokashira_park_pond_2024.jpg"},
   yanaka: {"src": "img/yanaka.jpg", "by": "Christophe95", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Yanaka_Ginza_2.jpg"},
   akiba: {"src": "img/akiba.jpg", "by": "ElHeineken", "lic": "CC BY 4.0", "page": "https://commons.wikimedia.org/wiki/File:Akihabara_Night.jpg"},

@@ -7,15 +7,16 @@
 //   calendar[]: { date, plan: idea code or null, fixed: text (arrival/departure), notes: [text] }
 //   ideas[]:    { code, pick: "suggested" | "either" | "alt", hours, walk 1-3, title, why, items: [...] }
 //   items[]:    place row { time?, place | name, sub?, status? } | { type: "leg", from, to, via, dur } | { type: "tbd" | "note", text }
-//   food[]:     { title, intro?, items: [{ place, area, kind, price?, status, note?, plan? }] }
-//   status:     "booked" (已訂) | "first" (優先考慮) | "idea" (候選) | "review" (保留？)
+//   food[]:     { title, intro?, empty?, items: [{ place, kind, price?, status, note?, plan? }] }
+//   status:     "booked" (已訂) | "tobook" (未訂) | "first" (優先考慮) | "idea" (候選) | "review" (保留？)
+//   leg dur:    "80 min", "~40 min" (~ = approx, shown as 約), "2.5h"
 
 window.TRIP = {
-  version: 3,
+  version: 4,
   updated: "2026-10-09",
   changes: {
-    zh: "日子改為 12 月 20 至 30 日（10 晚）。行程改為 11 個選擇（A 至 K），未排日子。新增餐廳候選，同埋留咗一餐俾阿姨揀。",
-    en: "Dates now 20–30 Dec (10 nights). The plan is now 11 day options (A–K), not yet placed on dates. New restaurant shortlist, with one dinner kept for Dad's partner to choose."
+    zh: "日子改為 12 月 20 至 30 日（10 晚）。行程改為 11 個選擇（A 至 K），未排日子。新增餐廳候選，同埋留咗一餐俾阿姨揀。字大咗、按鈕大咗，手機易睇啲。",
+    en: "Dates now 20–30 Dec (10 nights). The plan is now 11 day options (A–K), not yet placed on dates. New restaurant shortlist, with one dinner kept for Dad's partner to choose. Bigger text and buttons for phones."
   },
   status: { zh: "計劃中 · 全部未訂", en: "Still planning · nothing booked" },
   start: "2026-12-20",
@@ -63,20 +64,19 @@ window.TRIP = {
     nakano:    { zh: "中野百老匯", en: "Nakano Broadway", ja: "中野ブロードウェイ", q: "Nakano Broadway" },
 
     // Restaurants
-    honda:     { zh: "麵処 本田（秋葉原本店）", en: "Noodle Place Honda, Akihabara", ja: "麺処 ほん田 秋葉原本店", q: "Mendokoro Honda Akihabara", url: "https://www.tablecheck.com/en/shops/mendokoro-honda-akihabara/reserve" },
+    honda:     { zh: "麵處 本田（秋葉原本店）", en: "Mendokoro Honda, Akihabara", ja: "麺処 ほん田 秋葉原本店", q: "Mendokoro Honda Akihabara", url: "https://www.tablecheck.com/en/shops/mendokoro-honda-akihabara/reserve" },
     hachigo:   { zh: "銀座 八五", en: "Ginza Hachigo", ja: "銀座 八五", q: "Ginza Hachigo ramen", url: "https://www.tablecheck.com/en/shops/ginza-hachigou/reserve" },
     denkushi:  { zh: "DEN KUSHI FLORI", en: "DEN KUSHI FLORI", ja: "デンクシフロリ", q: "DEN KUSHI FLORI", url: "https://www.denkushiflori.com/" },
     florilege: { zh: "Florilège", en: "Florilège", ja: "フロリレージュ 麻布台ヒルズ", q: "Florilege Azabudai Hills", url: "https://www.aoyama-florilege.jp/en/reservations" },
-    bistro0711:{ zh: "0711 GiNZA BiSTRO", en: "0711 GiNZA BiSTRO", ja: "0711 GiNZA BiSTRO", q: "0711 GiNZA BiSTRO", url: "https://www.0711ginzabistro.com/" },
+    bistro0711:{ zh: "0711 GiNZA BiSTRO", en: "0711 GiNZA BiSTRO", ja: "銀座8丁目 0711 GiNZA BiSTRO", q: "0711 GiNZA BiSTRO", url: "https://www.0711ginzabistro.com/" },
     largent:   { zh: "L'ARGENT", en: "L'ARGENT", ja: "ラルジャン 霞が関", q: "L'ARGENT Kasumigaseki", url: "https://largent.tokyo/en/reservation/" },
-    maz:       { zh: "MAZ", en: "MAZ", ja: "MAZ 赤坂", q: "MAZ Tokyo restaurant", url: "https://maztokyo.jp/?lang=en" },
-    ushigoro:  { zh: "USHIGORO S. 銀座", en: "USHIGORO S. Ginza", ja: "USHIGORO S. GINZA", q: "USHIGORO S. GINZA", url: "https://ushigoro-s.com/menu.html" },
-    azur:      { zh: "AZUR et MASA UEKI", en: "AZUR et MASA UEKI", ja: "アズール エ マサ ウエキ 西麻布", q: "AZUR et MASA UEKI", url: "https://restaurant-azur.com/" },
-    sezanne:   { zh: "SÉZANNE", en: "SÉZANNE", ja: "セザン フォーシーズンズホテル丸の内", q: "SEZANNE Tokyo", url: "https://www.sezanne.tokyo/" }
+    maz:       { zh: "MAZ", en: "MAZ", ja: "東京ガーデンテラス紀尾井町 MAZ", q: "MAZ Tokyo Garden Terrace Kioicho", url: "https://maztokyo.jp/?lang=en" },
+    ushigoro:  { zh: "USHIGORO S. 銀座", en: "USHIGORO S. Ginza", ja: "銀座 USHIGORO S.", q: "USHIGORO S. GINZA", url: "https://ushigoro-s.com/menu.html" },
+    azur:      { zh: "AZUR et MASA UEKI", en: "AZUR et MASA UEKI", ja: "アズール エ マサ ウエキ 西麻布", q: "AZUR et MASA UEKI", url: "https://restaurant-azur.com/" }
   },
 
   calendar: [
-    { date: "2026-12-20", fixed: { zh: "抵達東京，晚上輕鬆", en: "Arrive in Tokyo, easy evening" }, notes: [{ zh: "航班待定", en: "Flights TBC" }] },
+    { date: "2026-12-20", fixed: { zh: "抵達東京，夜晚輕鬆啲", en: "Arrive in Tokyo, easy evening" }, notes: [{ zh: "航班待定", en: "Flights TBC" }] },
     { date: "2026-12-21", plan: null },
     { date: "2026-12-22", plan: null, notes: [{ zh: "迪士尼門票比 24、25 日平", en: "Disney tickets cheaper than on 24–25 Dec" }] },
     { date: "2026-12-23", plan: null, notes: [{ zh: "豐洲市場休市", en: "Toyosu Market closed" }] },
@@ -125,7 +125,7 @@ window.TRIP = {
         { time: { zh: "朝早", en: "Morning" }, place: "tsukiji", sub: { zh: "9 點至 2 點最好，唔好帶大行李", en: "Best 9:00–14:00; no big luggage" } },
         { time: { zh: "中午", en: "Midday" }, place: "ginza", sub: { zh: "我自己食拉麵（銀座 八五），你哋行街", en: "My solo ramen (Ginza Hachigo) while you browse" } },
         { time: { zh: "夜晚", en: "Evening" }, place: "marunouchi", sub: { zh: "紅磚車站同燈飾", en: "Red-brick station and lights" } },
-        { type: "note", text: { zh: "唔好同搬去箱根同一日。", en: "Keep this separate from the Hakone travel day." } }
+        { type: "note", text: { zh: "唔好同去箱根嗰日排喺同一日。", en: "Keep this separate from the Hakone travel day." } }
       ]
     },
     {
@@ -156,7 +156,7 @@ window.TRIP = {
       why: { zh: "聖誕活動做到 12 月 25 日。", en: "Christmas events run until 25 Dec." },
       items: [
         { time: { zh: "全日", en: "All day" }, place: "disney" },
-        { type: "tbd", text: { zh: "去海洋 (DisneySea) 定樂園 (Disneyland)？", en: "DisneySea or Disneyland?" } },
+        { type: "tbd", text: { zh: "去迪士尼海洋定迪士尼樂園？", en: "DisneySea or Disneyland?" } },
         { type: "note", text: { zh: "22 日門票比 24、25 日平。睇完夜場唔好再趕去遠嘅餐廳，第二日朝早輕鬆啲。", en: "22 Dec tickets are cheaper than 24–25. No far-away dinner booking after the night show; keep the next morning easy." } }
       ]
     },
@@ -179,7 +179,7 @@ window.TRIP = {
       why: { zh: "我一定想去。你哋可以一齊，或者另外行自己鍾意嘅地方。", en: "A must for me. Join, or the three of you can do something else." },
       items: [
         { time: { zh: "上晝", en: "Morning" }, place: "akiba", sub: { zh: "電器、模型、動漫舖", en: "Electronics, models, anime shops" } },
-        { time: { zh: "中午", en: "Lunch" }, place: "honda", sub: { zh: "我自己食拉麵，可能要等位", en: "My solo ramen; may need to queue" } },
+        { time: { zh: "中午", en: "Midday" }, place: "honda", sub: { zh: "我自己食拉麵，可能要等位", en: "My solo ramen; may need to queue" } },
         { type: "leg", from: { zh: "秋葉原", en: "Akihabara" }, to: { zh: "中野", en: "Nakano" }, via: { zh: "JR 中央・總武線", en: "JR Chuo-Sobu Line" }, dur: "30 min" },
         { time: { zh: "下晝", en: "Afternoon" }, place: "nakano", sub: { zh: "出站行 5 分鐘", en: "5 min walk from the station" } }
       ]
@@ -230,8 +230,8 @@ window.TRIP = {
         { place: "denkushi", plan: "B", kind: { zh: "日法融合 · 表參道", en: "Japanese-French · Omotesando" }, price: { zh: "每位 ¥13,000 + 10%", en: "¥13,000 pp + 10%" }, status: "first" },
         { place: "florilege", plan: "E", kind: { zh: "創意法國菜 · 麻布台", en: "Creative French · Azabudai" }, price: { zh: "每位 ¥24,000 + 10%", en: "¥24,000 pp + 10%" }, status: "idea", note: { zh: "大約三個鐘。", en: "About three hours." } },
         { place: "bistro0711", plan: "C", kind: { zh: "法式小館 · 銀座", en: "French bistro · Ginza" }, status: "idea", note: { zh: "散叫，比套餐輕鬆。", en: "À la carte; lighter than a tasting menu." } },
-        { place: "largent", kind: { zh: "現代法國菜 · 霞關", en: "Modern French · Kasumigaseki" }, status: "idea", note: { zh: "去年計劃有。最遲 7:30pm 落單，逢星期四休息。", en: "From last year's plan. Last order 7:30pm, closed Thursdays." } },
-        { place: "maz", kind: { zh: "秘魯菜配日本食材 · 赤坂", en: "Peruvian with Japanese produce · Akasaka" }, price: { zh: "每位 ¥33,000 + 10%", en: "¥33,000 pp + 10%" }, status: "idea", note: { zh: "唔順路，除非嗰日剛好喺附近。", en: "Off-route unless we're already nearby." } }
+        { place: "largent", kind: { zh: "現代法國菜 · 霞關", en: "Modern French · Kasumigaseki" }, status: "idea", note: { zh: "去年計劃入面有。最遲 7:30pm 落單，逢星期四休息。", en: "From last year's plan. Last order 7:30pm, closed Thursdays." } },
+        { place: "maz", kind: { zh: "秘魯菜配日本食材 · 紀尾井町（赤坂見附）", en: "Peruvian with Japanese produce · Kioicho (Akasaka-mitsuke)" }, price: { zh: "每位 ¥33,000 + 10%", en: "¥33,000 pp + 10%" }, status: "idea", note: { zh: "唔順路，除非嗰日剛好喺附近。", en: "Off-route unless we're already nearby." } }
       ]
     },
     {

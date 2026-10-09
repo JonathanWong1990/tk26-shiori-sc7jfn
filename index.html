@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#F2F0EB">
+<meta name="theme-color" content="#F2F0EB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191714" media="(prefers-color-scheme: dark)">
 <title>東京聖誕之旅 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,21 +18,21 @@
   --ink: #2A2723;
   --muted: #736C62;
   --line: #E2DDD3;
-  --bronze: #7D6D52;
+  --bronze: #6B5C43;
   --bronze-soft: #EAE4D8;
   --pass: #2E2A25;
   --pass-fg: #F2F0EB;
   --pass-muted: #B5AA97;
   --moss: #4F6141;
   --moss-soft: #E3E8DC;
-  --ochre: #8E621B;
+  --ochre: #7A5414;
   --ochre-soft: #F3E9D6;
 
   --f-display: "Noto Serif TC", "Songti TC", serif;
   --f-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
   --f-latin: "Cormorant Garamond", "Times New Roman", serif;
 
-  --s-xs: 0.8125rem;
+  --s-xs: 0.875rem;
   --s-sm: 0.9375rem;
   --s-md: 1.0625rem;
   --s-lg: 1.3125rem;
@@ -73,7 +74,7 @@ button { font: inherit; color: inherit; }
 .cover-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .eyebrow { font-family: var(--f-latin); font-style: italic; font-size: 1.0625rem; color: var(--bronze); letter-spacing: .03em; }
 .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); padding: 2px; flex: none; }
-.lang button { border: 0; background: transparent; padding: 5px 12px; border-radius: 999px; font-size: var(--s-xs); font-weight: 500; color: var(--muted); cursor: pointer; min-height: 32px; }
+.lang button { border: 0; background: transparent; padding: 5px 14px; border-radius: 999px; font-size: var(--s-sm); font-weight: 500; color: var(--muted); cursor: pointer; min-height: 40px; }
 .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 h1 {
   font-family: var(--f-display); font-weight: 300; font-size: var(--s-xl); letter-spacing: .1em;
@@ -100,7 +101,7 @@ h1 {
 }
 .chips::-webkit-scrollbar { display: none; }
 .chip {
-  flex: none; text-decoration: none; padding: 7px 14px; border-radius: 999px;
+  flex: none; text-decoration: none; padding: 10px 16px; border-radius: 999px; min-height: 44px; display: inline-flex; align-items: center;
   background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
   font-size: var(--s-sm); font-weight: 500; color: var(--ink); white-space: nowrap; line-height: 1.4;
 }
@@ -110,46 +111,31 @@ h1 {
 .chip.today { box-shadow: inset 0 0 0 1.5px var(--bronze); }
 .chip .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--bronze); margin-right: 6px; vertical-align: 2px; }
 
-/* Overview */
+/* Sections */
 .section { padding-block: 20px; }
 .sec-title { font-family: var(--f-display); font-weight: 400; font-size: var(--s-lg); letter-spacing: .08em; margin: 0 0 12px; }
-.overview { list-style: none; margin: 0; padding: 0; background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
-.overview li + li { border-top: 1px solid var(--line); }
-.overview a { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; text-decoration: none; }
-.overview .n { font-family: var(--f-latin); font-size: 1.75rem; line-height: 1; color: var(--bronze); }
-.overview .w { min-width: 0; line-height: 1.45; }
-.overview .w b { display: block; font-weight: 500; }
-.overview .w small { color: var(--muted); font-size: var(--s-xs); }
-.overview .d { font-size: var(--s-xs); color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 
-/* Day */
-.day { padding-block: 22px 6px; display: grid; gap: 12px; }
-.day-head { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: end; padding-inline: 2px; }
-.day-head .n { grid-row: span 2; font-family: var(--f-latin); font-size: 3.4rem; line-height: .85; color: var(--bronze); }
-.day-head .lbl { font-size: var(--s-xs); color: var(--muted); letter-spacing: .08em; }
-.day-head h2 { font-family: var(--f-display); font-weight: 400; font-size: var(--s-lg); letter-spacing: .06em; margin: 0; line-height: 1.4; text-wrap: balance; }
-.day-facts { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: var(--s-xs); color: var(--muted); padding-inline: 2px; }
-.day-facts span { display: inline-flex; align-items: center; gap: 6px; }
+/* Rows */
 .walk { display: inline-flex; gap: 3px; }
 .walk i { width: 14px; height: 4px; border-radius: 2px; background: var(--line); }
 .walk i.on { background: var(--bronze); }
 
 .card { background: var(--surface); border-radius: 18px; padding: 4px 16px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
-.item { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; }
+.item { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; }
 .item + .item { border-top: 1px solid var(--line); }
 .item .t { font-size: var(--s-xs); color: var(--bronze); font-weight: 500; letter-spacing: .04em; align-self: start; padding-top: 3px; }
 .item .w { min-width: 0; line-height: 1.5; }
 .item .w b { font-weight: 500; }
 .item .w small { display: block; color: var(--muted); font-size: var(--s-xs); margin-top: 1px; }
 .item.muted .w b { color: var(--muted); font-weight: 400; }
-.badge { display: inline-block; font-size: 0.75rem; font-weight: 500; padding: 1px 8px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
+.badge { display: inline-block; font-size: 0.8125rem; font-weight: 500; padding: 1px 8px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
 .badge.b-booked { color: var(--moss); background: var(--moss-soft); }
 .badge.b-tobook { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); }
 .acts { display: flex; gap: 6px; }
 .act {
   width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; text-decoration: none;
   display: grid; place-items: center; background: var(--bronze-soft); color: var(--ink);
-  font-size: 0.75rem; font-weight: 500; line-height: 1;
+  font-size: 0.8125rem; font-weight: 500; line-height: 1;
 }
 .act:hover { background: var(--line); }
 
@@ -158,11 +144,11 @@ h1 {
   display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; position: relative;
 }
 .pass .st { min-width: 0; }
-.pass .st b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.125rem; letter-spacing: .04em; line-height: 1.35; }
+.pass .st b { display: block; overflow-wrap: anywhere; font-family: var(--f-display); font-weight: 400; font-size: 1.125rem; letter-spacing: .04em; line-height: 1.35; }
 .pass .st:last-child { text-align: right; }
-.pass .mid { text-align: center; font-size: 0.75rem; color: var(--pass-muted); line-height: 1.4; max-width: 9.5em; }
+.pass .mid { text-align: center; font-size: 0.8125rem; color: var(--pass-muted); line-height: 1.4; max-width: 8em; }
 .pass .mid b { display: block; font-family: var(--f-latin); font-size: 1.375rem; font-weight: 500; color: var(--pass-fg); letter-spacing: .02em; }
-.pass .lab { font-size: 0.6875rem; letter-spacing: .14em; color: var(--pass-muted); }
+.pass .lab { font-size: 0.8125rem; letter-spacing: .14em; color: var(--pass-muted); }
 
 .flag { border-radius: 14px; padding: 11px 14px; font-size: var(--s-sm); line-height: 1.6; display: grid; grid-template-columns: auto 1fr; gap: 10px; }
 .flag .k { font-size: var(--s-xs); font-weight: 700; letter-spacing: .04em; padding-top: 2px; white-space: nowrap; }
@@ -188,6 +174,14 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
 .sheet .btn.primary { background: var(--ink); color: var(--bg); }
 .sheet .btn.ghost { background: var(--bronze-soft); }
 
+@media (max-width: 420px) {
+  .item { grid-template-columns: 64px 1fr; }
+  .item .acts { grid-column: 2; margin-top: 4px; }
+  .pass .st b { font-size: 1rem; }
+}
+.plan-link { display: inline-block; padding: 6px 0; text-decoration: none; }
+body.locked { overflow: hidden; }
+
 /* v3: work-in-progress label, calendar, day options, restaurants, facts */
 .wip {
   display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
@@ -206,7 +200,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
 .cal li + li { border-top: 1px solid var(--line); }
 .cal .dt { text-align: center; line-height: 1.1; padding-top: 2px; }
 .cal .dt b { display: block; font-family: var(--f-latin); font-weight: 500; font-size: 1.6rem; color: var(--bronze); }
-.cal .dt small { font-size: 0.75rem; color: var(--muted); }
+.cal .dt small { font-size: 0.8125rem; color: var(--muted); }
 .cal .what { min-width: 0; line-height: 1.5; }
 .cal .what > b { font-weight: 500; }
 .cal .what .open { color: var(--muted); }
@@ -216,6 +210,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
 .cal .nts span { font-size: var(--s-xs); color: var(--ochre); }
 .cal li.today .dt b { color: var(--ink); }
 .cal li.today .dt small::after { content: " · 今日"; color: var(--bronze); }
+[data-lang="en"] .cal li.today .dt small::after { content: " · Today"; }
 
 .idea { padding-block: 18px 4px; display: grid; gap: 10px; }
 .idea-head { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; align-items: center; padding-inline: 2px; }
@@ -223,7 +218,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
 .idea-head h3 { font-family: var(--f-display); font-weight: 400; font-size: var(--s-lg); letter-spacing: .04em; margin: 0; line-height: 1.4; text-wrap: balance; }
 .idea-facts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: var(--s-xs); color: var(--muted); }
 .idea-facts > span { display: inline-flex; align-items: center; gap: 6px; }
-.pick { font-size: 0.75rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; }
+.pick { font-size: 0.8125rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; }
 .pick.suggested { background: var(--ink); color: var(--bg); }
 .pick.either { background: var(--bronze-soft); color: var(--bronze); }
 .pick.alt { box-shadow: inset 0 0 0 1px var(--line); color: var(--muted); }
@@ -299,7 +294,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="taxi-ja">
     <div class="hint"><span class="zh">俾司機睇 · 出示此畫面</span><span class="en">Show this to the driver</span></div>
     <div class="ja" id="taxi-ja" lang="ja"></div>
-    <div class="please" lang="ja">ここまでお願いします。<small><span class="zh">（請帶我哋去呢度）</span><span class="en">(Please take us here.)</span></small></div>
+    <div class="please"><span lang="ja">ここまでお願いします。</span><small lang="zh-Hant"><span class="zh">（請帶我哋去呢度）</span><span class="en">(Please take us here.)</span></small></div>
     <div class="row">
       <a class="btn ghost" id="taxi-map" href="#" target="_blank" rel="noopener"><span class="zh">開地圖</span><span class="en">Open map</span></a>
       <button class="btn primary" type="button" id="taxi-close"><span class="zh">關閉</span><span class="en">Close</span></button>
@@ -332,6 +327,12 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
     return '<span class="zh">' + esc(o.zh) + '</span><span class="en">' + esc(o.en) + '</span>';
   }
   function mapUrl(p) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.q || p.en); }
+  // "~40 min" -> 約 40 分鐘 / ~40 min ; "2.5h" -> 2.5 小時 / 2.5 h
+  function dur(d) {
+    var m = /^(~?)([\d.]+)\s*(min|h)$/.exec(String(d).trim());
+    if (!m) return { zh: d, en: d };
+    return { zh: (m[1] ? '約 ' : '') + m[2] + (m[3] === 'h' ? ' 小時' : ' 分鐘'), en: m[1] + m[2] + (m[3] === 'h' ? ' h' : ' min') };
+  }
   function parse(s) { return new Date(s + 'T00:00:00'); }
   function md(d) { return (d.getMonth() + 1) + '/' + d.getDate(); }
   var tbc = T.datesConfirmed ? '' : '?';
@@ -357,9 +358,9 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
   function acts(id, p) {
     if (!p) return '<span></span>';
     return '<span class="acts">' +
-      (p.ja ? '<button class="act" type="button" data-taxi="' + esc(id) + '" aria-label="Taxi card"><span class="zh">的士</span><span class="en">Taxi</span></button>' : '') +
-      '<a class="act" href="' + esc(mapUrl(p)) + '" target="_blank" rel="noopener" aria-label="Google Maps"><span class="zh">地圖</span><span class="en">Map</span></a>' +
-      (p.url ? '<a class="act" href="' + esc(p.url) + '" target="_blank" rel="noopener" aria-label="Website"><span class="zh">網站</span><span class="en">Web</span></a>' : '') +
+      (p.ja ? '<button class="act" type="button" data-taxi="' + esc(id) + '"><span class="zh">的士</span><span class="en">Taxi</span></button>' : '') +
+      '<a class="act" href="' + esc(mapUrl(p)) + '" target="_blank" rel="noopener"><span class="zh">地圖</span><span class="en">Map</span></a>' +
+      (p.url ? '<a class="act" href="' + esc(p.url) + '" target="_blank" rel="noopener"><span class="zh">網站</span><span class="en">Web</span></a>' : '') +
       '</span>';
   }
   function renderItems(items) {
@@ -368,11 +369,9 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
     items.forEach(function (it) {
       if (it.type === 'leg') {
         flush();
-        var est = /^~/.test(it.dur);
-        out += '<div class="pass"><div class="st"><span class="lab">FROM</span><b>' + bi(it.from) + '</b></div>' +
-          '<div class="mid"><b>' + esc(it.dur.replace(/^~/, '')) + '</b>' + bi(it.via) +
-          (est ? ' <span class="zh">· 約</span><span class="en">· approx.</span>' : '') + '</div>' +
-          '<div class="st"><span class="lab">TO</span><b>' + bi(it.to) + '</b></div></div>';
+        out += '<div class="pass"><div class="st"><span class="lab">' + bi({ zh: '由', en: 'FROM' }) + '</span><b>' + bi(it.from) + '</b></div>' +
+          '<div class="mid"><b>' + bi(dur(it.dur)) + '</b>' + bi(it.via) + '</div>' +
+          '<div class="st"><span class="lab">' + bi({ zh: '到', en: 'TO' }) + '</span><b>' + bi(it.to) + '</b></div></div>';
       } else if (it.type === 'tbd' || it.type === 'note') {
         flush();
         var k = it.type === 'tbd' ? '<span class="zh">未決定</span><span class="en">Undecided</span>' : '<span class="zh">留意</span><span class="en">Note</span>';
@@ -408,7 +407,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
       : '<span class="open"><span class="zh">待排</span><span class="en">Not yet planned</span></span>';
     var nts = (c.notes || []).map(function (n) { return '<span>' + bi(n) + '</span>'; }).join('');
     cal += '<li' + (c.date === todayStr ? ' class="today"' : '') + ' id="date-' + c.date + '">' +
-      '<span class="dt"><b>' + d.getDate() + '</b><small><span class="zh">12月 ' + WEEK_ZH[d.getDay()] + '</span><span class="en">' + WEEK_EN[d.getDay()] + '</span></small></span>' +
+      '<span class="dt"><b>' + d.getDate() + '</b><small><span class="zh">週' + WEEK_ZH[d.getDay()] + '</span><span class="en">' + WEEK_EN[d.getDay()] + '</span></small></span>' +
       '<span class="what">' + what + (nts ? '<span class="nts">' + nts + '</span>' : '') + '</span></li>';
   });
   if (open) cal += '</ul>';
@@ -425,7 +424,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
     if (!list.length) return;
     ih += '<div class="idea-group">' + bi(g.label) + '</div>';
     list.forEach(function (x) {
-      var walk = '<span><span class="zh">行路</span><span class="en">Walking</span> <span class="walk" aria-label="' + x.walk + '/3">' +
+      var walk = '<span><span class="zh">行路</span><span class="en">Walking</span> <span class="walk" role="img" aria-label="' + x.walk + '/3">' +
         [1, 2, 3].map(function (k) { return '<i class="' + (k <= x.walk ? 'on' : '') + '"></i>'; }).join('') + '</span></span>';
       var hrs = typeof x.hours === 'string'
         ? '<span><span class="zh">' + esc(x.hours) + ' 小時</span><span class="en">' + esc(x.hours) + ' hours</span></span>'
@@ -447,7 +446,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
     if (g.items && g.items.length) {
       fh += '<div class="card">' + g.items.map(function (r) {
         var p = T.places[r.place];
-        return '<div class="item"><span class="t">' + (r.plan ? '<a href="#plan-' + r.plan + '" style="text-decoration:none"><span class="zh">配</span><span class="en">Plan</span><span class="plan-tag">' + esc(r.plan) + '</span></a>' : '') + '</span>' +
+        return '<div class="item"><span class="t">' + (r.plan ? '<a class="plan-link" href="#plan-' + r.plan + '"><span class="zh">配</span><span class="en">Plan</span><span class="plan-tag">' + esc(r.plan) + '</span></a>' : '') + '</span>' +
           '<span class="w"><b>' + bi(p) + '</b>' + badge(r.status) +
           '<small>' + bi(r.kind) + '</small>' +
           (r.price ? '<span class="price">' + bi(r.price) + '</span>' : '') +
@@ -487,16 +486,19 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
   lbtns.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.set); }); });
 
   // Taxi card
-  var taxi = document.getElementById('taxi');
-  function openTaxi(id) {
+  var taxi = document.getElementById('taxi'), opener = null, mainEl = document.querySelector('main'), coverEl = document.querySelector('.cover'), barEl = document.querySelector('.picker');
+  function setInert(on) { [mainEl, coverEl, barEl].forEach(function (el) { if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); }); }
+  function openTaxi(id, btn) {
     var p = T.places[id]; if (!p) return;
+    opener = btn || null;
+    setInert(true); document.body.classList.add('locked');
     document.getElementById('taxi-ja').textContent = p.ja;
     document.getElementById('taxi-map').href = mapUrl(p);
     taxi.hidden = false;
     document.getElementById('taxi-close').focus();
   }
-  function closeTaxi() { taxi.hidden = true; }
-  document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-taxi]'); if (b) openTaxi(b.dataset.taxi); });
+  function closeTaxi() { taxi.hidden = true; setInert(false); document.body.classList.remove('locked'); if (opener) opener.focus(); opener = null; }
+  document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-taxi]'); if (b) openTaxi(b.dataset.taxi, b); });
   document.getElementById('taxi-close').addEventListener('click', closeTaxi);
   taxi.addEventListener('click', function (ev) { if (ev.target === taxi) closeTaxi(); });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && !taxi.hidden) closeTaxi(); });
@@ -509,6 +511,7 @@ footer { padding-block: 28px 56px; color: var(--muted); font-size: var(--s-xs); 
       var on = c.dataset.target === id;
       if (on && !c.classList.contains('on')) bar.scrollTo({ left: Math.max(0, c.offsetLeft - 18), behavior: 'smooth' });
       c.classList.toggle('on', on);
+      if (on) c.setAttribute('aria-current', 'location'); else c.removeAttribute('aria-current');
     });
   }
   function onScroll() {

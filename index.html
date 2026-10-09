@@ -236,6 +236,32 @@ body.locked { overflow: hidden; }
 .plan-tag { font-family: var(--f-latin); font-size: 0.9375rem; color: var(--bronze); margin-left: 4px; }
 .item .w .price { display: block; font-size: var(--s-xs); color: var(--ink); margin-top: 1px; }
 
+/* Hotels */
+.hotels { display: grid; gap: 12px; }
+.hotel { background: var(--surface); border-radius: 18px; padding: 16px; box-shadow: 0 1px 2px rgba(42,39,35,.05); display: grid; gap: 10px; }
+.hotel-top { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+.hotel-top .w { min-width: 0; line-height: 1.45; }
+.hotel-top b { font-family: var(--f-display); font-weight: 500; font-size: 1.125rem; letter-spacing: .02em; }
+.hotel-top small { display: block; color: var(--bronze); font-size: var(--s-xs); margin-top: 2px; }
+.hotel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: var(--s-sm); }
+.hotel li { display: grid; grid-template-columns: 14px 1fr; gap: 6px; }
+.hotel li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--bronze); margin-top: 0.7em; }
+.hotel .hnote { margin: 0; padding-top: 10px; border-top: 1px solid var(--line); font-size: var(--s-sm); color: var(--muted); line-height: 1.6; }
+@media (max-width: 420px) { .hotel-top { grid-template-columns: 1fr; } }
+
+/* Collapsible restaurant groups */
+.more { background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
+.more + .more { margin-top: 8px; }
+.more summary {
+  list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;
+  padding: 14px 16px; min-height: 52px; font-weight: 500;
+}
+.more summary::-webkit-details-marker { display: none; }
+.more summary .cnt { font-size: var(--s-xs); color: var(--muted); font-weight: 400; }
+.more summary::after { content: ""; width: 8px; height: 8px; border-right: 1.5px solid var(--bronze); border-bottom: 1.5px solid var(--bronze); transform: rotate(45deg); margin: -4px 4px 0 0; transition: transform .15s; }
+.more[open] summary::after { transform: rotate(-135deg); margin-top: 4px; }
+.more .card { box-shadow: none; border-top: 1px solid var(--line); border-radius: 0 0 18px 18px; }
+
 .facts { list-style: none; margin: 0; padding: 4px 16px; background: var(--surface); border-radius: 18px; box-shadow: 0 1px 2px rgba(42,39,35,.05); }
 .facts li { padding: 12px 0; line-height: 1.55; }
 .facts li + li { border-top: 1px solid var(--line); }
@@ -266,6 +292,12 @@ body.locked { overflow: hidden; }
     <h2 class="sec-title"><span class="zh">日曆</span><span class="en">Calendar</span></h2>
     <p class="sec-lede"><span class="zh">揀好行程之後會排入日子。</span><span class="en">Day plans get placed on dates once chosen.</span></p>
     <div id="cal"></div>
+  </section>
+
+  <section class="section" id="hotels">
+    <h2 class="sec-title"><span class="zh">酒店</span><span class="en">Hotels</span></h2>
+    <p class="sec-lede"><span class="zh">Vanjai 揀嘅候選，未訂。要兩間房，等航班同箱根決定咗先比價。</span><span class="en">Vanjai's candidates, not booked. We need two rooms; we'll compare prices once flights and Hakone are decided.</span></p>
+    <div class="hotels" id="hotel-list"></div>
   </section>
 
   <section class="section" id="ideas">
@@ -438,21 +470,34 @@ body.locked { overflow: hidden; }
   });
   document.getElementById('idea-list').innerHTML = ih;
 
+  // Hotels
+  document.getElementById('hotel-list').innerHTML = (T.hotels || []).map(function (h) {
+    var p = T.places[h.place];
+    return '<div class="hotel"><div class="hotel-top"><span class="w"><b>' + bi(p) + '</b>' + badge(h.status) +
+      '<small>' + bi(h.area) + '</small></span>' + acts(h.place, p) + '</div>' +
+      '<ul>' + (h.facts || []).map(function (f) { return '<li><span>' + bi(f) + '</span></li>'; }).join('') + '</ul>' +
+      (h.note ? '<p class="hnote">' + bi(h.note) + '</p>' : '') + '</div>';
+  }).join('');
+
   // Restaurants
+  function foodRow(r) {
+    var p = T.places[r.place];
+    return '<div class="item"><span class="t">' + (r.plan ? '<a class="plan-link" href="#plan-' + r.plan + '"><span class="zh">配</span><span class="en">Plan</span><span class="plan-tag">' + esc(r.plan) + '</span></a>' : '') + '</span>' +
+      '<span class="w"><b>' + bi(p) + '</b>' + badge(r.status) +
+      '<small>' + bi(r.kind) + '</small>' +
+      (r.price ? '<span class="price">' + bi(r.price) + '</span>' : '') +
+      (r.note ? '<small>' + bi(r.note) + '</small>' : '') + '</span>' + acts(r.place, p) + '</div>';
+  }
   var fh = '';
   T.food.forEach(function (g) {
     fh += '<div class="food-group"><h3>' + bi(g.title) + '</h3>' + (g.intro ? '<p class="intro">' + bi(g.intro) + '</p>' : '');
     if (g.empty) fh += '<div class="empty-slot">' + bi(g.empty) + '</div>';
-    if (g.items && g.items.length) {
-      fh += '<div class="card">' + g.items.map(function (r) {
-        var p = T.places[r.place];
-        return '<div class="item"><span class="t">' + (r.plan ? '<a class="plan-link" href="#plan-' + r.plan + '"><span class="zh">配</span><span class="en">Plan</span><span class="plan-tag">' + esc(r.plan) + '</span></a>' : '') + '</span>' +
-          '<span class="w"><b>' + bi(p) + '</b>' + badge(r.status) +
-          '<small>' + bi(r.kind) + '</small>' +
-          (r.price ? '<span class="price">' + bi(r.price) + '</span>' : '') +
-          (r.note ? '<small>' + bi(r.note) + '</small>' : '') + '</span>' + acts(r.place, p) + '</div>';
-      }).join('') + '</div>';
-    }
+    if (g.items && g.items.length) fh += '<div class="card">' + g.items.map(foodRow).join('') + '</div>';
+    (g.sub || []).forEach(function (sg) {
+      fh += '<details class="more"><summary><span>' + bi(sg.title) + (sg.plan ? ' <span class="plan-tag">' + esc(sg.plan) + '</span>' : '') + '</span>' +
+        '<span class="cnt"><span class="zh">' + sg.items.length + ' 間</span><span class="en">' + sg.items.length + '</span></span></summary>' +
+        '<div class="card">' + sg.items.map(foodRow).join('') + '</div></details>';
+    });
     fh += '</div>';
   });
   document.getElementById('food-list').innerHTML = fh;
@@ -465,6 +510,7 @@ body.locked { overflow: hidden; }
   // Section chips
   var sections = [
     { id: 'calendar', l: { zh: '日曆', en: 'Calendar' } },
+    { id: 'hotels', l: { zh: '酒店', en: 'Hotels' } },
     { id: 'ideas', l: { zh: '行程選擇', en: 'Day plans' } },
     { id: 'food', l: { zh: '餐廳', en: 'Food' } },
     { id: 'notes', l: { zh: '留意', en: 'Notes' } }

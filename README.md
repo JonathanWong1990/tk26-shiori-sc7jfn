@@ -9,5 +9,5 @@ A phone-first, read-only page for the family (Traditional Chinese by default, wi
 Planning research lives in the markdown files in the parent folder. That's the source of truth, and `trip-data.js` is the family-friendly version of it. Each round:
 
 1. Increase `version`, set `updated`, and rewrite `changes` (what's new since the last version, in plain words).
-2. Write as the planners speaking ("我", "我哋"). Dad's partner is 阿姨. Don't put names, booking references, passport details or phone numbers in it while the page is public.
+2. Use first names: John, Vanjai, Ben, Christine ("我哋" for the planners is fine). Don't put booking references, passport details or phone numbers in it while the page is public.
 3. Keep `status` as 計劃中 until the trip is final.

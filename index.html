@@ -165,6 +165,16 @@ h1 { font-family: var(--f-display); font-weight: 300; font-size: var(--s-xl); le
 .lrow.slim { grid-template-columns: 1fr auto; }
 .lrow.timed { grid-template-columns: auto auto 1fr auto; }
 
+/* Route choices and split days */
+.fork { display: grid; gap: 10px; padding: 14px; border-radius: 18px; box-shadow: inset 0 0 0 1.5px var(--line); }
+.fork-head { font-size: var(--s-xs); font-weight: 700; letter-spacing: .06em; color: var(--bronze); }
+.fork-opt { display: grid; gap: 8px; }
+.fork-lbl { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-size: 1.0625rem; letter-spacing: .04em; }
+.fork-n { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-family: var(--f-body); font-size: 0.8125rem; font-weight: 700; flex: none; }
+.fork-or { display: flex; align-items: center; gap: 10px; font-size: var(--s-xs); color: var(--muted); }
+.fork-or::before, .fork-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.fork .stack { gap: 8px; }
+
 /* Boarding-pass legs */
 .pass {
   background: var(--pass); color: var(--pass-fg); border-radius: 18px; padding: 14px 18px;
@@ -324,6 +334,10 @@ footer a { color: var(--bronze); }
 .sheet .sbtn { border: 0; border-radius: 14px; padding: 14px; font-weight: 500; cursor: pointer; text-decoration: none; text-align: center; background: var(--bronze-soft); }
 .sheet .sbtn.primary { background: var(--ink); color: var(--bg); }
 
+@media (max-width: 420px) {
+  .fork { padding: 10px; margin-inline: -4px; }
+  .fork .rows { padding-inline: 10px; }
+}
 @media (max-width: 380px) {
   .lrow .th { width: 52px; height: 52px; }
   .pass .st b { font-size: 1rem; }
@@ -424,10 +438,30 @@ footer a { color: var(--bronze); }
   });
   var foodById = {}; foodRows.forEach(function (f) { foodById[f.r.place] = f; });
   var hotelById = {}; (T.hotels || []).forEach(function (h) { hotelById[h.place] = h; });
-  function plansWith(id) { return T.ideas.filter(function (x) { return x.items.some(function (it) { return it.place === id; }); }); }
+  // All place rows in a plan, including those inside route choices
+  function flat(items) {
+    var out = [];
+    items.forEach(function (it) {
+      if (it.type === 'branches') it.options.forEach(function (o) { out = out.concat(flat(o.items)); });
+      else out.push(it);
+    });
+    return out;
+  }
+  function plansWith(id) { return T.ideas.filter(function (x) { return flat(x.items).some(function (it) { return it.place === id; }); }); }
   function planImage(x) {
-    for (var i = 0; i < x.items.length; i++) { var p = x.items[i].place; if (p && IMG[p]) return IMG[p]; }
+    var f = flat(x.items);
+    for (var i = 0; i < f.length; i++) { var p = f[i].place; if (p && IMG[p]) return IMG[p]; }
     return null;
+  }
+  // "淺草寺 → 隅田川 → 晴空塔 / 上野 → 淺草寺" for plan cards
+  function stopLine(items, lang) {
+    var parts = [], seen = {};
+    items.forEach(function (it) {
+      if (it.type === 'branches') {
+        parts.push(it.options.map(function (o) { return stopLine(o.items, lang); }).join(it.mode === 'split' ? ' ｜ ' : ' / '));
+      } else if (it.place && !seen[it.place]) { seen[it.place] = 1; parts.push(esc(T.places[it.place][lang])); }
+    });
+    return parts.join(' → ');
   }
 
   var now = new Date(); now.setHours(0, 0, 0, 0);
@@ -443,7 +477,7 @@ footer a { color: var(--bronze); }
   }
   function placeRow(it) {
     var p = T.places[it.place];
-    var inner = '<span class="w"><b>' + (p ? bi(p) : bi(it.name)) + '</b>' + badge(it.status) + (it.sub ? '<small>' + bi(it.sub) + '</small>' : '') + '</span>';
+    var inner = '<span class="w"><b>' + (p ? bi(p) : bi(it.name)) + '</b>' + badge(it.status) + (it.optional ? '<span class="badge b-idea"><span class="zh">可選</span><span class="en">Optional</span></span>' : '') + (it.sub ? '<small>' + bi(it.sub) + '</small>' : '') + '</span>';
     var t = it.time ? '<span class="t">' + bi(it.time) + '</span>' : '';
     if (!p) return '<div class="lrow slim' + (t ? ' timed' : '') + '" style="grid-template-columns:' + (t ? 'auto 1fr' : '1fr') + '">' + t + inner + '</div>';
     return '<a class="lrow' + (t ? ' timed' : '') + '" href="#/place/' + esc(it.place) + '">' + t + thumb(it.place) + inner + svg('chev', 'chev') + '</a>';
@@ -463,6 +497,16 @@ footer a { color: var(--bronze); }
         out += '<div class="pass"><div class="st"><span class="lab">' + bi({ zh: '由', en: 'FROM' }) + '</span><b>' + bi(it.from) + '</b></div>' +
           '<div class="mid"><b>' + bi(dur(it.dur)) + '</b>' + bi(it.via) + '</div>' +
           '<div class="st"><span class="lab">' + bi({ zh: '到', en: 'TO' }) + '</span><b>' + bi(it.to) + '</b></div></div>';
+      } else if (it.type === 'branches') {
+        flush();
+        var split = it.mode === 'split';
+        out += '<div class="fork"><div class="fork-head">' + (split
+            ? '<span class="zh">分頭行</span><span class="en">Split up</span>'
+            : '<span class="zh">揀一條路線</span><span class="en">Pick one route</span>') + '</div>' +
+          it.options.map(function (o, k) {
+            return (k && !split ? '<div class="fork-or"><span class="zh">或者</span><span class="en">or</span></div>' : '') +
+              '<div class="fork-opt"><div class="fork-lbl">' + (split ? '' : '<span class="fork-n">' + (k + 1) + '</span>') + bi(o.label) + '</div>' + renderItems(o.items) + '</div>';
+          }).join('') + '</div>';
       } else if (it.type === 'tbd' || it.type === 'note') {
         flush();
         var k = it.type === 'tbd' ? '<span class="zh">未決定</span><span class="en">Undecided</span>' : '<span class="zh">留意</span><span class="en">Note</span>';
@@ -535,15 +579,18 @@ footer a { color: var(--bronze); }
       h += '<div class="group-lbl">' + bi(g.label) + '</div><div class="plan-cards">';
       list.forEach(function (x) {
         var im = planImage(x);
-        var stops = x.items.filter(function (it) { return it.place; }).map(function (it) { return T.places[it.place]; });
         h += '<a class="card pcard" href="#/plan/' + x.code + '"><div class="img">' + (im ? '<img src="' + esc(im.src) + '" alt="" loading="lazy">' : '') +
           '<span class="code">' + esc(x.code) + '</span></div><div class="body"><h3>' + bi(x.title) + '</h3>' +
           '<div class="facts-row"><span class="pick ' + x.pick + '">' + bi(PICK[x.pick]) + '</span>' + hoursOf(x) + walkBar(x.walk) + '</div>' +
-          '<div class="stops"><span class="zh">' + stops.map(function (p) { return esc(p.zh); }).join(' → ') + '</span><span class="en">' + stops.map(function (p) { return esc(p.en); }).join(' → ') + '</span></div>' +
+          '<div class="stops"><span class="zh">' + stopLine(x.items, 'zh') + '</span><span class="en">' + stopLine(x.items, 'en') + '</span></div>' +
           '</div></a>';
       });
       h += '</div>';
     });
+    if (T.extras && T.extras.items.length) {
+      h += '<div class="group-lbl">' + bi(T.extras.title) + '</div>' + (T.extras.intro ? '<p class="lede">' + bi(T.extras.intro) + '</p>' : '') +
+        '<div class="card rows">' + T.extras.items.map(placeRow).join('') + '</div>';
+    }
     return { title: { zh: '行程選擇', en: 'Day plans' }, html: h };
   };
 

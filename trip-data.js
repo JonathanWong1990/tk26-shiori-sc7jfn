@@ -6,7 +6,9 @@
 //   places[id]: { zh, en, ja (taxi card), q (Google Maps search), url (official site, optional) }
 //   calendar[]: { date, plan: idea code or null, fixed: text (arrival/departure), notes: [text] }
 //   ideas[]:    { code, pick: "suggested" | "either" | "alt", hours, walk 1-3, title, why, items: [...] }
-//   items[]:    place row { time?, place | name, sub?, status? } | { type: "leg", from, to, via, dur } | { type: "tbd" | "note", text }
+//   items[]:    place row { time?, place | name, sub?, status?, optional? } | { type: "leg", from, to, via, dur } | { type: "tbd" | "note", text }
+//               | { type: "branches", mode: "or" (pick one) | "split" (people go separate ways), options: [{ label, items }] }
+//   extras:     { title, intro, items: [{ place, sub }] } — places that fit into other days or evenings
 //   hotels[]:   { place, status, area, facts: [text], note }
 //   food[]:     { title, intro?, empty?, items?: [row], sub?: [{ title, plan?, items: [row] }] (sub groups render collapsed) }
 //               row = { place, kind, price?, status?, note?, plan? }
@@ -14,11 +16,11 @@
 //   leg dur:    "80 min", "~40 min" (~ = approx, shown as 約), "2.5h"
 
 window.TRIP = {
-  version: 7,
+  version: 8,
   updated: "2026-10-09",
   changes: {
-    zh: "下面有分頁（首頁、行程、日曆、酒店、餐廳）。每個地方都有自己一頁，有相片、介紹、做咩好同小貼士。撳「的士卡」可以俾司機睇日文名。餐廳新增「Christine 想食嘅」。",
-    en: "Tabs along the bottom (Home, Plans, Calendar, Hotels, Food). Every place has its own page with a photo, what it is, what to do and tips. Tap Taxi card to show the driver the Japanese name. New in Food: Christine's picks."
+    zh: "行程改咗：A、B、E 而家係「揀一條路線」；C 精簡做築地同銀座；K 變成分頭行，John 去秋葉原中野，其他人逛新宿，夜晚新宿會合；新增 L（澀谷、代官山、惠比壽）。仲有「其他可以加嘅地方」。",
+    en: "Revised day plans: A, B and E now offer a choice of route; C is trimmed to Tsukiji and Ginza; K is a split day (John in Akihabara and Nakano, the others in Shinjuku, dinner together); new L (Shibuya, Daikanyama, Ebisu); plus other places we could fit in."
   },
   status: { zh: "計劃中 · 全部未訂", en: "Still planning · nothing booked" },
   start: "2026-12-20",
@@ -31,6 +33,13 @@ window.TRIP = {
     sensoji:   { zh: "淺草寺", en: "Senso-ji, Asakusa", ja: "浅草寺", q: "Senso-ji Temple" },
     sumida:    { zh: "隅田川河畔", en: "Sumida riverside", ja: "隅田公園", q: "Sumida Park" },
     skytree:   { zh: "東京晴空塔", en: "Tokyo Skytree", ja: "東京スカイツリー", q: "Tokyo Skytree" },
+    ueno:      { zh: "上野・阿美橫丁", en: "Ueno · Ameyoko", ja: "アメ横商店街", q: "Ameyoko Shopping Street" },
+    // New areas from the revised plans
+    shinjuku:  { zh: "新宿", en: "Shinjuku", ja: "新宿駅", q: "Shinjuku Station" },
+    roppongi:  { zh: "六本木・東京中城", en: "Roppongi · Tokyo Midtown", ja: "東京ミッドタウン", q: "Tokyo Midtown Roppongi" },
+    daikanyama:{ zh: "代官山", en: "Daikanyama", ja: "代官山駅", q: "Daikanyama T-Site" },
+    ebisu:     { zh: "惠比壽", en: "Ebisu", ja: "恵比寿ガーデンプレイス", q: "Yebisu Garden Place" },
+    odaiba:    { zh: "台場", en: "Odaiba", ja: "お台場海浜公園", q: "Odaiba Seaside Park" },
     // B · Harajuku to Shibuya
     meiji:     { zh: "明治神宮", en: "Meiji Jingu", ja: "明治神宮", q: "Meiji Jingu" },
     omotesando:{ zh: "表參道", en: "Omotesando", ja: "表参道駅", q: "Omotesando" },
@@ -135,57 +144,80 @@ window.TRIP = {
   ideas: [
     {
       code: "A", pick: "suggested", hours: "6–8", walk: 2,
-      title: { zh: "舊東京：淺草、晴空塔", en: "Old Tokyo: Asakusa and Skytree" },
-      why: { zh: "寺廟、老街小食，再上晴空塔睇全東京。新舊對比好易明。", en: "Temple streets and traditional snacks, then the city view from Skytree." },
+      title: { zh: "東京東邊：淺草", en: "Eastern Tokyo: Asakusa" },
+      why: { zh: "寺廟同老街。之後揀一個：上晴空塔睇全東京，或者去上野阿美橫丁行街市。", en: "Temple and old streets, then either the Skytree view or the Ueno street market." },
       items: [
-        { time: { zh: "上晝", en: "Morning" }, place: "sensoji", sub: { zh: "雷門、仲見世通小食", en: "Kaminarimon gate, Nakamise snack street" } },
-        { time: { zh: "中午", en: "Midday" }, place: "sumida", sub: { zh: "沿河散步過去", en: "Riverside walk across" } },
-        { time: { zh: "下晝", en: "Afternoon" }, place: "skytree", sub: { zh: "觀景台、下面商場 Solamachi", en: "Observation deck, Solamachi mall below" } },
-        { type: "note", text: { zh: "想輕鬆啲可以唔上晴空塔。", en: "Skip Skytree for a lighter day." } }
+        { type: "branches", mode: "or", options: [
+          { label: { zh: "淺草 → 晴空塔", en: "Asakusa → Skytree" }, items: [
+            { time: { zh: "上晝", en: "Morning" }, place: "sensoji", sub: { zh: "雷門、仲見世通小食", en: "Kaminarimon gate, Nakamise snack street" } },
+            { time: { zh: "中午", en: "Midday" }, place: "sumida", sub: { zh: "沿河行過去，約 20 分鐘", en: "Riverside walk across, about 20 min" } },
+            { time: { zh: "下晝", en: "Afternoon" }, place: "skytree", sub: { zh: "觀景台、下面商場", en: "Observation deck and the mall below" } }
+          ] },
+          { label: { zh: "上野 → 淺草", en: "Ueno → Asakusa" }, items: [
+            { time: { zh: "上晝", en: "Morning" }, place: "ueno", sub: { zh: "街市、小食、平價貨", en: "Street market, snacks, bargains" } },
+            { time: { zh: "下晝", en: "Afternoon" }, place: "sensoji", sub: { zh: "喺淺草完結", en: "Finish in Asakusa" } }
+          ] }
+        ] },
+        { type: "note", text: { zh: "想喺淺草食 Hommage 晚餐，就要揀「上野 → 淺草」，喺淺草完結。", en: "For dinner at Hommage, take the Ueno → Asakusa route so the day ends in Asakusa." } }
       ]
     },
     {
-      code: "B", pick: "suggested", hours: "5–8", walk: 3,
-      title: { zh: "原宿、表參道、澀谷", en: "Harajuku, Omotesando, Shibuya" },
-      why: { zh: "神社、建築同行街，夜晚睇澀谷燈光。", en: "Shrine, architecture and shopping, then Shibuya lights at night." },
+      code: "B", pick: "suggested", hours: "5–7", walk: 2,
+      title: { zh: "明治神宮，然後揀一個結尾", en: "Meiji Jingu, then pick a finish" },
+      why: { zh: "由原宿出發，兩個方向都好順路。揀邊個視乎晚餐想喺邊度食。", en: "Both directions flow easily from Harajuku. Choose by where you want dinner." },
       items: [
-        { time: { zh: "上晝", en: "Morning" }, place: "meiji", sub: { zh: "森林入面嘅神社", en: "Shrine in a forest" } },
-        { time: { zh: "下晝", en: "Afternoon" }, place: "omotesando", sub: { zh: "由原宿行過去約 10 分鐘", en: "About 10 min walk from Harajuku" } },
-        { time: { zh: "夜晚", en: "Evening" }, place: "shibuya", sub: { zh: "由表參道行過去約 20 分鐘", en: "About 20 min walk from Omotesando" } },
-        { type: "note", text: { zh: "行攰咗可以搭車或者的士。晚餐可以配表參道嘅 DEN KUSHI FLORI。", en: "Train or taxi if legs are tired. Dinner could be DEN KUSHI FLORI in Omotesando." } }
+        { time: { zh: "上晝", en: "Morning" }, place: "meiji", sub: { zh: "森林入面嘅神社，原宿站旁邊", en: "Forest shrine beside Harajuku Station" } },
+        { type: "branches", mode: "or", options: [
+          { label: { zh: "表參道・青山", en: "Omotesando · Aoyama" }, items: [
+            { time: { zh: "下晝", en: "Afternoon" }, place: "omotesando", sub: { zh: "晚餐：DEN KUSHI FLORI、mærge、NARISAWA", en: "Dinner: DEN KUSHI FLORI, mærge, NARISAWA" } }
+          ] },
+          { label: { zh: "澀谷", en: "Shibuya" }, items: [
+            { time: { zh: "夜晚", en: "Evening" }, place: "shibuya", sub: { zh: "晚餐：LATURE", en: "Dinner: LATURE" } }
+          ] }
+        ] },
+        { type: "note", text: { zh: "三個區都去會太攰。夠精神先順便行過第三個。", en: "All three areas is too much; only pass through the third if everyone has energy." } }
       ]
     },
     {
-      code: "C", pick: "suggested", hours: "5–8", walk: 2,
-      title: { zh: "築地、銀座、東京站", en: "Tsukiji, Ginza, Tokyo Station" },
-      why: { zh: "朝早食海鮮，銀座行街，夜晚東京站丸之內燈飾。", en: "Seafood breakfast, Ginza shopping, Marunouchi lights in the evening." },
+      code: "C", pick: "suggested", hours: "5–7", walk: 2,
+      title: { zh: "築地、銀座", en: "Tsukiji and Ginza" },
+      why: { zh: "兩個區好近。John 去食銀座 八五 拉麵，其他人喺銀座行街。", en: "Two close areas. John has Ginza Hachigo ramen while the others browse Ginza." },
       items: [
-        { time: { zh: "朝早", en: "Morning" }, place: "tsukiji", sub: { zh: "9 點至 2 點最好，唔好帶大行李", en: "Best 9:00–14:00; no big luggage" } },
+        { time: { zh: "朝早", en: "Morning" }, place: "tsukiji", sub: { zh: "早餐食少少，留肚食拉麵", en: "Keep breakfast light if ramen is lunch" } },
         { time: { zh: "中午", en: "Midday" }, place: "ginza", sub: { zh: "John 自己食拉麵（銀座 八五），其他人行街", en: "John's solo ramen (Ginza Hachigo) while the others browse" } },
-        { time: { zh: "夜晚", en: "Evening" }, place: "marunouchi", sub: { zh: "紅磚車站同燈飾", en: "Red-brick station and lights" } },
+        { time: { zh: "夜晚", en: "Evening" }, place: "marunouchi", sub: { zh: "如果銀座冇訂晚餐，可以順便睇燈飾", en: "Only if there's no Ginza dinner booked" }, optional: true },
         { type: "note", text: { zh: "唔好同去箱根嗰日排喺同一日。", en: "Keep this separate from the Hakone travel day." } }
       ]
     },
     {
       code: "D", pick: "either", hours: "6–8", walk: 2,
-      title: { zh: "豐洲：市場、teamLab Planets、聖誕市集", en: "Toyosu: market, teamLab Planets, Christmas market" },
-      why: { zh: "三個地方都喺新豐洲附近，唔使走來走去。", en: "Three stops all close to Shin-Toyosu." },
+      title: { zh: "豐洲：市場、teamLab Planets", en: "Toyosu: market and teamLab Planets" },
+      why: { zh: "幾個地方都喺新豐洲附近，唔使走來走去。", en: "Everything is close to Shin-Toyosu." },
       items: [
         { time: { zh: "朝早", en: "Morning" }, place: "toyosu", sub: { zh: "睇魚市場，食海鮮", en: "Fish market and seafood" } },
         { time: { zh: "下晝", en: "Afternoon" }, place: "planets", sub: { zh: "沉浸式藝術，要赤腳行水", en: "Immersive art; you walk barefoot through water" } },
-        { time: { zh: "夜晚", en: "Evening" }, place: "shintoyosu" },
-        { type: "tbd", text: { zh: "同 E 二揀一（兩個都係 teamLab）。要揀市場開門、又喺 25 日或之前嘅日子。", en: "Pick D or E (both feature teamLab). Needs a market-open day on or before 25 Dec." } }
+        { time: { zh: "夜晚", en: "Evening" }, place: "shintoyosu", sub: { zh: "25 日或之前先有", en: "Only on or before 25 Dec" }, optional: true },
+        { type: "note", text: { zh: "聖誕之後，豐洲同 teamLab 已經夠一日；想多啲海景可以改去台場。", en: "After Christmas, Toyosu and teamLab are enough for the day; Odaiba is an option for more waterfront." } },
+        { type: "tbd", text: { zh: "同 E 二揀一（兩個都係 teamLab）。要揀市場開門嘅日子。", en: "Pick D or E (both feature teamLab). Needs a day the market is open." } }
       ]
     },
     {
       code: "E", pick: "either", hours: "5–8", walk: 2,
-      title: { zh: "麻布台、東京鐵塔、芝公園", en: "Azabudai, Tokyo Tower, Shiba Park" },
-      why: { zh: "視覺效果最強嘅一日。", en: "The most visual day." },
+      title: { zh: "麻布台，然後揀一個結尾", en: "Azabudai, then pick a finish" },
+      why: { zh: "teamLab Borderless 之後，揀東京鐵塔聖誕市集，或者六本木藝術同晚餐。", en: "After teamLab Borderless, choose either Tokyo Tower's Christmas market or Roppongi for art and dinner." },
       items: [
         { time: { zh: "下晝", en: "Afternoon" }, place: "borderless", sub: { zh: "要預約入場時間", en: "Timed entry, book ahead" } },
-        { time: { zh: "黃昏", en: "Dusk" }, place: "tower" },
-        { time: { zh: "夜晚", en: "Evening" }, place: "shiba", sub: { zh: "開到 12 月 25 日", en: "Open until 25 Dec" } },
-        { type: "note", text: { zh: "可以拆開兩日：teamLab 一日，聖誕市集另一日。晚餐可以配麻布台嘅 Florilège。", en: "Can be split: teamLab one day, Christmas market another. Dinner could be Florilège in Azabudai." } }
+        { type: "branches", mode: "or", options: [
+          { label: { zh: "東京鐵塔・芝公園", en: "Tokyo Tower · Shiba Park" }, items: [
+            { time: { zh: "黃昏", en: "Dusk" }, place: "tower" },
+            { time: { zh: "夜晚", en: "Evening" }, place: "shiba", sub: { zh: "聖誕市集，開到 12 月 25 日", en: "Christmas market, until 25 Dec" } }
+          ] },
+          { label: { zh: "六本木・東京中城", en: "Roppongi · Tokyo Midtown" }, items: [
+            { time: { zh: "夜晚", en: "Evening" }, place: "roppongi", sub: { zh: "晚餐：Métis、Bia、Héritage、AZUR", en: "Dinner: Métis, Bia, Héritage, AZUR" } }
+          ] }
+        ] },
+        { type: "note", text: { zh: "淨係揀一個結尾。想喺麻布台食 Florilège，就留喺麻布台。", en: "Choose one finish only. For Florilège, stay in Azabudai for dinner." } },
+        { type: "tbd", text: { zh: "同 D 二揀一（兩個都係 teamLab）。", en: "Pick D or E (both feature teamLab)." } }
       ]
     },
     {
@@ -213,13 +245,33 @@ window.TRIP = {
     },
     {
       code: "K", pick: "suggested", hours: "6–8", walk: 2,
-      title: { zh: "John 嘅興趣日：秋葉原 → 中野", en: "John's hobby day: Akihabara → Nakano" },
-      why: { zh: "John 一定想去。Ben、Christine、Vanjai 可以一齊，或者另外行自己鍾意嘅地方。", en: "A must for John. The other three can join or do something else." },
+      title: { zh: "分頭行，新宿食晚飯", en: "Split day, dinner together in Shinjuku" },
+      why: { zh: "John 去秋葉原同中野；Ben、Christine、Vanjai 唔使跟住行模型舖，可以自己喺新宿逛。夜晚大家喺新宿會合食飯。", en: "John does Akihabara and Nakano; Ben, Christine and Vanjai needn't follow him round hobby shops and can explore Shinjuku. Everyone meets in Shinjuku for dinner." },
       items: [
-        { time: { zh: "上晝", en: "Morning" }, place: "akiba", sub: { zh: "電器、模型、動漫舖", en: "Electronics, models, anime shops" } },
-        { time: { zh: "中午", en: "Midday" }, place: "honda", sub: { zh: "John 自己食拉麵，可能要等位", en: "John's solo ramen; may need to queue" } },
-        { type: "leg", from: { zh: "秋葉原", en: "Akihabara" }, to: { zh: "中野", en: "Nakano" }, via: { zh: "JR 中央・總武線", en: "JR Chuo-Sobu Line" }, dur: "30 min" },
-        { time: { zh: "下晝", en: "Afternoon" }, place: "nakano", sub: { zh: "出站行 5 分鐘", en: "5 min walk from the station" } }
+        { type: "branches", mode: "split", options: [
+          { label: { zh: "John", en: "John" }, items: [
+            { time: { zh: "上晝", en: "Morning" }, place: "akiba", sub: { zh: "電器、模型、動漫舖", en: "Electronics, models, anime shops" } },
+            { time: { zh: "中午", en: "Midday" }, place: "honda", sub: { zh: "John 自己食拉麵，可能要等位", en: "John's solo ramen; may need to queue" } },
+            { type: "leg", from: { zh: "秋葉原", en: "Akihabara" }, to: { zh: "中野", en: "Nakano" }, via: { zh: "JR 中央・總武線", en: "JR Chuo-Sobu Line" }, dur: "30 min" },
+            { time: { zh: "下晝", en: "Afternoon" }, place: "nakano", sub: { zh: "出站行 5 分鐘", en: "5 min walk from the station" } }
+          ] },
+          { label: { zh: "Ben、Christine、Vanjai", en: "Ben, Christine, Vanjai" }, items: [
+            { time: { zh: "下晝", en: "Afternoon" }, place: "shinjuku", sub: { zh: "行街、睇夜景，自己決定", en: "Shopping and city views, your choice" } }
+          ] }
+        ] },
+        { time: { zh: "晚餐", en: "Dinner" }, place: "shinjuku", sub: { zh: "四個人喺新宿會合食飯", en: "All four meet in Shinjuku for dinner" } },
+        { type: "note", text: { zh: "拉麵或者行街搞耐咗，晚餐時間可以彈性啲。", en: "Keep dinner flexible in case the ramen queue or shopping runs late." } }
+      ]
+    },
+    {
+      code: "L", pick: "suggested", hours: "4–7", walk: 2,
+      title: { zh: "澀谷、代官山、惠比壽", en: "Shibuya, Daikanyama, Ebisu" },
+      why: { zh: "如果 B 喺青山完結，呢日就可以好好行澀谷。代官山由澀谷行過去約 15 分鐘，惠比壽係晚餐好地方。", en: "A proper Shibuya day if B ends in Aoyama. Daikanyama is a 15-minute walk from Shibuya, and Ebisu is a good dinner area." },
+      items: [
+        { time: { zh: "下晝", en: "Afternoon" }, place: "shibuya" },
+        { time: { zh: "黃昏", en: "Dusk" }, place: "daikanyama", sub: { zh: "小店、書店、咖啡店", en: "Boutiques, bookshop, cafés" } },
+        { time: { zh: "晚餐", en: "Dinner" }, place: "ebisu", sub: { zh: "或者澀谷嘅 LATURE", en: "Or LATURE in Shibuya" } },
+        { type: "note", text: { zh: "如果住澀谷，可以做抵達日或者休息日。B 已經喺澀谷完結就唔使。", en: "Could be a light arrival or rest day if staying in Shibuya. Skip it if B already ended in Shibuya." } }
       ]
     },
     {
@@ -246,17 +298,31 @@ window.TRIP = {
       title: { zh: "慢活一日", en: "Slow day" },
       why: { zh: "散步、咖啡店、小店。迪士尼或者箱根之後休息用。", en: "Strolls, cafés and small shops. A rest day after Disney or Hakone." },
       items: [
-        { time: { zh: "揀一個", en: "Pick one" }, place: "kichijoji" },
-        { time: { zh: "或者", en: "Or" }, place: "yanaka" }
+        { type: "branches", mode: "or", options: [
+          { label: { zh: "西邊：吉祥寺", en: "West: Kichijoji" }, items: [ { place: "kichijoji" } ] },
+          { label: { zh: "北邊：谷中・根津", en: "North: Yanaka · Nezu" }, items: [ { place: "yanaka", sub: { zh: "可以配上野", en: "Pairs with Ueno" } } ] }
+        ] }
       ]
     }
   ],
+
+  extras: {
+    title: { zh: "其他可以加嘅地方", en: "Other places we could fit in" },
+    intro: { zh: "唔使另外用一整日，可以放入其他行程或者夜晚。", en: "These don't need a full day; they can slot into other plans or evenings." },
+    items: [
+      { place: "shinjuku", sub: { zh: "K 日分頭行時去，或者住新宿嘅夜晚", en: "During split day K, or an evening if staying in Shinjuku" } },
+      { place: "roppongi", sub: { zh: "E 嘅其中一個結尾", en: "One of E's finishes" } },
+      { place: "ueno", sub: { zh: "A 嘅其中一條路線，或者配谷中", en: "One of A's routes, or with Yanaka" } },
+      { place: "odaiba", sub: { zh: "聖誕之後代替 D 嘅聖誕市集", en: "Instead of D's Christmas market after Christmas" } }
+    ]
+  },
 
   hotels: [
     {
       place: "sequence", status: "idea",
       area: { zh: "澀谷・原宿之間", en: "Between Shibuya and Harajuku" },
       facts: [
+    { title: { zh: "大約有幾多日", en: "How many days we have" }, text: { zh: "20 同 30 日主要係搭飛機，21–29 日有 9 個全日。箱根用 2 日、迪士尼 1 日，東京大約 6 日。", en: "20 and 30 Dec are mostly flying, leaving 9 full days (21–29). Hakone takes 2 and Disney 1, so about 6 days for Tokyo." } },
         { zh: "澀谷站行 3–7 分鐘，明治神宮前行 8 分鐘", en: "3–7 min walk to Shibuya Station, 8 min to Meiji-jingumae" },
         { zh: "下晝 5 點先入住，2 點退房", en: "Check-in 17:00, check-out 14:00" },
         { zh: "房間兩日先清潔一次", en: "Rooms cleaned every two days" }
@@ -300,7 +366,7 @@ window.TRIP = {
       intro: { zh: "揀嗰日行程完結附近嘅餐廳，唔使專登過區。", en: "Chosen to match where that day ends, so no cross-town trips." },
       items: [
         { place: "denkushi", plan: "B", kind: { zh: "日法融合 · 表參道", en: "Japanese-French · Omotesando" }, price: { zh: "每位 ¥13,000 + 10%", en: "¥13,000 pp + 10%" }, status: "first" },
-        { place: "florilege", plan: "E", kind: { zh: "創意法國菜 · 麻布台", en: "Creative French · Azabudai" }, price: { zh: "每位 ¥24,000 + 10%", en: "¥24,000 pp + 10%" }, status: "idea", note: { zh: "大約三個鐘。", en: "About three hours." } },
+        { place: "florilege", plan: "E", kind: { zh: "創意法國菜 · 麻布台", en: "Creative French · Azabudai" }, price: { zh: "每位 ¥24,000 + 10%", en: "¥24,000 pp + 10%" }, status: "idea", note: { zh: "大約三個鐘。要留喺麻布台食，唔好先去東京鐵塔再返轉頭。", en: "About three hours. Stay in Azabudai for it rather than going to Tokyo Tower first." } },
         { place: "bistro0711", plan: "C", kind: { zh: "法式小館 · 銀座", en: "French bistro · Ginza" }, status: "idea", note: { zh: "散叫，比套餐輕鬆。", en: "À la carte; lighter than a tasting menu." } },
         { place: "largent", kind: { zh: "現代法國菜 · 霞關", en: "Modern French · Kasumigaseki" }, status: "idea", note: { zh: "去年計劃入面有。最遲 7:30pm 落單，逢星期四休息。", en: "From last year's plan. Last order 7:30pm, closed Thursdays." } },
         { place: "maz", kind: { zh: "秘魯菜配日本食材 · 紀尾井町（赤坂見附）", en: "Peruvian with Japanese produce · Kioicho (Akasaka-mitsuke)" }, price: { zh: "每位 ¥33,000 + 10%", en: "¥33,000 pp + 10%" }, status: "idea", note: { zh: "唔順路，除非嗰日剛好喺附近。", en: "Off-route unless we're already nearby." } }
@@ -318,7 +384,7 @@ window.TRIP = {
           title: { zh: "表參道・澀谷", en: "Omotesando · Shibuya" }, plan: "B",
           items: [
             { place: "sincere", kind: { zh: "法國菜 · 千駄谷", en: "French · Sendagaya" }, status: "idea", note: { zh: "12 月 19–26 日有聖誕套餐，最多 4 位。", en: "Christmas course 19–26 Dec; max four." } },
-            { place: "lature", kind: { zh: "法國菜（野味）· 澀谷", en: "French (game meats) · Shibuya" }, status: "idea", note: { zh: "有野味，要問大家食唔食。", en: "Game meats; check everyone's OK with that." } },
+            { place: "lature", plan: "L", kind: { zh: "法國菜（野味）· 澀谷", en: "French (game meats) · Shibuya" }, status: "idea", note: { zh: "B 喺澀谷完結或者 L 日都啱。有野味，要問大家食唔食。", en: "Fits a Shibuya finish to B, or day L. Game meats; check everyone's OK with that." } },
             { place: "monolith", kind: { zh: "古典法國菜 · 澀谷至表參道之間", en: "Classic French · between Shibuya and Omotesando" }, status: "idea" },
             { place: "maerge", kind: { zh: "現代法國菜 · 南青山", en: "Modern French · Minami-Aoyama" }, status: "idea", note: { zh: "較貴，同 DEN KUSHI FLORI 比較。", en: "Higher spend; compare with DEN KUSHI FLORI." } },
             { place: "narisawa", kind: { zh: "創新菜 · 南青山", en: "Innovative · Minami-Aoyama" }, status: "idea", note: { zh: "每月 1 號朝早 10 點（日本時間）開放下個月訂位，好難訂。", en: "Next month's bookings open on the 1st, 10:00 Japan time; very limited." } }
@@ -349,7 +415,7 @@ window.TRIP = {
           ]
         },
         {
-          title: { zh: "六本木・西麻布（未有行程配合）", en: "Roppongi · Nishiazabu (no day plan here yet)" },
+          title: { zh: "六本木・西麻布", en: "Roppongi · Nishiazabu" }, plan: "E",
           items: [
             { place: "metis", kind: { zh: "法國菜 · 六本木", en: "French · Roppongi" }, price: { zh: "每位約 ¥30,239（已包服務費）", en: "About ¥30,239 pp incl. service" }, status: "idea", note: { zh: "有私人房（2–5 位）。好啱 Vanjai 口味。", en: "Private room for 2–5. A strong match for Vanjai." } },
             { place: "bia", kind: { zh: "日泰融合 · 乃木坂", en: "Japanese-Thai · Nogizaka" }, price: { zh: "每位 ¥35,455 + 服務費", en: "¥35,455 pp + service" }, status: "idea" },

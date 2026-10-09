@@ -22,5 +22,11 @@ window.PLACE_IMG = {
   kichijoji: {"src": "img/kichijoji.jpg", "by": "ARandomName123", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Inokashira_park_pond_2024.jpg"},
   yanaka: {"src": "img/yanaka.jpg", "by": "Christophe95", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Yanaka_Ginza_2.jpg"},
   akiba: {"src": "img/akiba.jpg", "by": "ElHeineken", "lic": "CC BY 4.0", "page": "https://commons.wikimedia.org/wiki/File:Akihabara_Night.jpg"},
-  nakano: {"src": "img/nakano.jpg", "by": "fletcherjcm", "lic": "CC BY-SA 2.0", "page": "https://commons.wikimedia.org/wiki/File:Mandarake_(4970180671).jpg"}
+  nakano: {"src": "img/nakano.jpg", "by": "fletcherjcm", "lic": "CC BY-SA 2.0", "page": "https://commons.wikimedia.org/wiki/File:Mandarake_(4970180671).jpg"},
+  ueno: {"src": "img/ueno.jpg", "by": "HKFumi (Wikimedia Commons user)", "lic": "CC BY-SA 2.5", "page": "https://commons.wikimedia.org/wiki/File:Ameyoko_Ueno_Tokyo_Japan.jpg"},
+  roppongi: {"src": "img/roppongi.jpg", "by": "Morio", "lic": "CC BY-SA 3.0", "page": "https://commons.wikimedia.org/wiki/File:Roppongi_Hills_and_Tokyo_Midtown_2011_January.jpg"},
+  daikanyama: {"src": "img/daikanyama.jpg", "by": "Syced", "lic": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Streetview_in_Daikanyama_(79795).jpg"},
+  ebisu: {"src": "img/ebisu.jpg", "by": "Ximonic (Simo Räsänen)", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Shibuya_and_Shinjuku_from_Yebisu_Garden_Place_Tower,_Ebisu,_Tokyo,_Japan,_2024_May.jpg"},
+  odaiba: {"src": "img/odaiba.jpg", "by": "Stephen Kelly", "lic": "CC BY 2.0", "page": "https://commons.wikimedia.org/wiki/File:Views_of_Rainbow_Bridge_and_Tokyo_Tower_from_Odaiba_at_night_2013-09-11.jpg"},
+  shinjuku: {"src": "img/shinjuku.jpg", "by": "Basile Morin", "lic": "CC BY-SA 4.0", "page": "https://commons.wikimedia.org/wiki/File:Colorful_neon_street_signs_in_Kabukich%C5%8D,_Shinjuku,_Tokyo.jpg"}
 };

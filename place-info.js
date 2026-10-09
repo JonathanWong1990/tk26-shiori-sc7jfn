@@ -310,5 +310,74 @@ window.PLACE_INFO = {
       { zh: "好多舖中午先開", en: "Many shops open around noon" },
       { zh: "中野站北口經 Sun Mall 行 5 分鐘", en: "5 minutes from Nakano Station's north exit through Sun Mall" }
     ]
+  },
+  ueno: {
+    about: { zh: "上野站旁邊嘅阿美橫丁係一條熱鬧街市，賣乾貨、海鮮、零食、平價衫鞋，好有香港街市嘅感覺。附近係上野公園同博物館。", en: "Ameyoko, beside Ueno Station, is a lively street market of dried goods, seafood, snacks and bargain clothes, much like a Hong Kong market street. Ueno Park and its museums are next door." },
+    todo: [
+      { zh: "行阿美橫丁，試街邊小食同水果串", en: "Walk Ameyoko and try street snacks and fruit skewers" },
+      { zh: "買朱古力、零食、乾貨做手信", en: "Pick up chocolate, snacks and dried goods as gifts" },
+      { zh: "上野公園散步，睇不忍池", en: "Stroll Ueno Park and Shinobazu Pond" }
+    ],
+    tips: [
+      { zh: "東京國立博物館 22–25 日只開少部分，26 日起休館", en: "Tokyo National Museum is only partly open 22–25 Dec and closed from the 26th" },
+      { zh: "由上野去淺草搭地鐵約 5 分鐘", en: "About 5 minutes by subway from Ueno to Asakusa" }
+    ]
+  },
+  shinjuku: {
+    about: { zh: "東京最熱鬧嘅區之一：大百貨公司、電器舖、霓虹燈街，仲有免費嘅都廳觀景台。新宿站係全世界最多人用嘅車站。", en: "One of Tokyo's busiest districts: big department stores, electronics shops, neon streets and a free observatory at the Metropolitan Government Building. Shinjuku Station is the world's busiest." },
+    todo: [
+      { zh: "伊勢丹、高島屋等百貨公司", en: "Department stores like Isetan and Takashimaya" },
+      { zh: "東京都廳免費觀景台睇夜景", en: "Free night view from the Tokyo Metropolitan Government observatory" },
+      { zh: "思出橫丁：細細間嘅燒鳥小店", en: "Omoide Yokocho, an alley of tiny yakitori bars" },
+      { zh: "新宿御苑散步（日間）", en: "Stroll Shinjuku Gyoen garden (daytime)" }
+    ],
+    tips: [
+      { zh: "車站好大，約人要講清楚邊個出口", en: "The station is huge; agree on a specific exit when meeting" },
+      { zh: "搭浪漫特快去箱根都係由新宿出發", en: "The Romancecar to Hakone also leaves from here" }
+    ]
+  },
+  roppongi: {
+    about: { zh: "東京嘅藝術同設計區：東京中城、六本木之丘，有美術館、設計店同好多高級餐廳。", en: "Tokyo's art and design district: Tokyo Midtown and Roppongi Hills, with museums, design shops and many fine restaurants." },
+    todo: [
+      { zh: "東京中城行設計店，冬天有燈飾", en: "Design shops at Tokyo Midtown, with winter lights" },
+      { zh: "六本木之丘森美術館同觀景台", en: "Mori Art Museum and the Roppongi Hills observation deck" },
+      { zh: "喺附近食晚餐", en: "Dinner nearby" }
+    ],
+    tips: [
+      { zh: "美術館聖誕新年假期可能休息，要查日子", en: "Museums may close over the holidays; check dates" },
+      { zh: "由麻布台過去好近", en: "A short hop from Azabudai" }
+    ]
+  },
+  daikanyama: {
+    about: { zh: "澀谷隔籬嘅寧靜小區，有型嘅小店、咖啡店，同好出名嘅蔦屋書店 (T-Site)。", en: "A calm neighbourhood next to Shibuya with stylish boutiques, cafés and the well-known Tsutaya T-Site bookshop." },
+    todo: [
+      { zh: "蔦屋書店 T-Site 睇書飲咖啡", en: "Browse books and have coffee at T-Site" },
+      { zh: "行橫街小店", en: "Wander the backstreet boutiques" },
+      { zh: "行去中目黑或者惠比壽", en: "Walk on to Nakameguro or Ebisu" }
+    ],
+    tips: [
+      { zh: "由澀谷行過去約 15 分鐘", en: "About 15 minutes on foot from Shibuya" }
+    ]
+  },
+  ebisu: {
+    about: { zh: "好多餐廳同酒吧嘅住宅區。惠比壽花園廣場冬天有大型聖誕燈飾。", en: "A residential area full of restaurants and bars. Yebisu Garden Place has big Christmas illuminations in winter." },
+    todo: [
+      { zh: "惠比壽花園廣場睇聖誕燈飾", en: "Christmas lights at Yebisu Garden Place" },
+      { zh: "喺車站附近食晚餐", en: "Dinner near the station" }
+    ],
+    tips: [
+      { zh: "由代官山行過去都好近", en: "Easy walk from Daikanyama" }
+    ]
+  },
+  odaiba: {
+    about: { zh: "東京灣嘅人工島，有海濱公園、商場同彩虹橋夜景。", en: "Man-made island on Tokyo Bay with a seaside park, malls and night views of the Rainbow Bridge." },
+    todo: [
+      { zh: "海濱公園睇彩虹橋夜景", en: "Rainbow Bridge night view from the seaside park" },
+      { zh: "行商場", en: "Browse the malls" },
+      { zh: "同實物大小嘅高達影相", en: "Photo with the life-size Gundam statue" }
+    ],
+    tips: [
+      { zh: "由豐洲搭百合海鷗號過去好方便", en: "Easy on the Yurikamome line from Toyosu" }
+    ]
   }
 };
